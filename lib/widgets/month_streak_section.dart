@@ -20,7 +20,7 @@ class MonthStreakSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-                    // Streak badge
+          // Streak badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -75,8 +75,10 @@ class MonthStreakSection extends StatelessWidget {
       lastDate: DateTime(2030),
       initialDatePickerMode: DatePickerMode.year,
     );
+    
     if (picked != null) {
-      onMonthChanged(DateTime(picked.year, picked.month, 1));
+      debugPrint("Month picker selected date: $picked");
+      onMonthChanged(picked);
     }
   }
 }

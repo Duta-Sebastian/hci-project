@@ -20,7 +20,7 @@ class HeaderSection extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: const NetworkImage('https://via.placeholder.com/40'),
+                //backgroundImage: const NetworkImage('https://via.placeholder.com/40'),
                 // In a real app, use the user's actual avatar
               ),
               const SizedBox(width: 10),

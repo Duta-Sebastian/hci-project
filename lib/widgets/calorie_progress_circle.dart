@@ -34,12 +34,14 @@ class CalorieProgressCircle extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            CustomPaint(
-              size: Size.infinite, // Add this line to fix the rendering issue
-              painter: CalorieProgressPainter(
-                progressPercent: _calculateProgress(),
-                progressColor: Colors.purple.shade300,
-                totalCalories: totalCalories,
+            RepaintBoundary(
+              child: CustomPaint(
+                size: Size.infinite,
+                painter: CalorieProgressPainter(
+                  progressPercent: _calculateProgress(),
+                  progressColor: Colors.purple.shade300,
+                  totalCalories: totalCalories,
+                ),
               ),
             ),
             
@@ -178,25 +180,33 @@ class CalorieProgressPainter extends CustomPainter {
       Offset(endPos.dx - endTextPainter.width / 2, endPos.dy + 15)
     );
     
-    final needlePaint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
+    // Only draw the needle when the size is valid (not during initial layout)
+    if (size.width > 0 && size.height > 0) {
+      final needlePaint = Paint()
+        ..color = Colors.black
+        ..strokeWidth = 2.0
+        ..style = PaintingStyle.stroke;
+        
+      final needleAngle = -math.pi + math.pi * progressPercent;
       
-    final needleAngle = -math.pi + math.pi * progressPercent;
-    
-    final endX = center.dx + radius * 0.8 * math.cos(needleAngle);
-    final endY = center.dy + radius * 0.8 * math.sin(needleAngle);
-    
-    canvas.drawLine(center, Offset(endX, endY), needlePaint);
-    
-    final knobPaint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill;
-    
-    canvas.drawCircle(center, 5.0, knobPaint);
+      final endX = center.dx + radius * 0.8 * math.cos(needleAngle);
+      final endY = center.dy + radius * 0.8 * math.sin(needleAngle);
+      
+      canvas.drawLine(center, Offset(endX, endY), needlePaint);
+      
+      final knobPaint = Paint()
+        ..color = Colors.black
+        ..style = PaintingStyle.fill;
+      
+      canvas.drawCircle(center, 5.0, knobPaint);
+    }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CalorieProgressPainter oldDelegate) {
+    // Only repaint when the actual values change
+    return oldDelegate.progressPercent != progressPercent ||
+           oldDelegate.progressColor != progressColor ||
+           oldDelegate.totalCalories != totalCalories;
+  }
 }

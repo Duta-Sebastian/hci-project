@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
+  final bool isFABVisible;
   final Function(int) onItemTapped;
 
   const BottomNavBar({
     super.key,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.isFABVisible,
   });
 
   @override
@@ -30,7 +32,7 @@ class BottomNavBar extends StatelessWidget {
               child: _buildNavItem(1, Icons.bar_chart, 'Analytics'),
             ),
             // Empty space for FAB
-            const Spacer(),
+            if (selectedIndex == 0 && isFABVisible) const Spacer(),
             // Community Button
             Expanded(
               child: _buildNavItem(2, Icons.people, 'Community'),

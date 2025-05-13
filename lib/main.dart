@@ -1,7 +1,23 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'screens/fitness_app.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+import 'services/meal_database.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  final dbPath = await getDatabasesPath();
+  final path = join(dbPath, 'meals.db');
+  await deleteDatabase(path);
+  
+  final db = MealDatabase.instance;
+  await db.addSampleData(DateTime.now());
+  
+  final yesterday = DateTime.now().subtract(const Duration(days: 1));
+  await db.addSampleData(yesterday);
+  
   runApp(const MyApp());
 }
 

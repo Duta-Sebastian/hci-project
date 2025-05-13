@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/nutrition_data.dart';
 import 'package:project/widgets/calorie_progress_circle.dart';
+import 'package:project/widgets/daily_meals.dart';
 import 'package:project/widgets/header_section.dart';
 import 'package:project/widgets/month_streak_section.dart';
 import 'package:project/widgets/nutrient_progress_bar.dart';
-import 'package:project/widgets/week_day_selector.dart';
+import 'package:project/widgets/week_day_selector_container.dart'; // Using a container widget
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final String userName;
   final int streakDays;
   final NutritionData nutritionData;
@@ -15,6 +16,8 @@ class HomeScreen extends StatelessWidget {
   final List<DateTime> weekDays;
   final Function(DateTime) onDateSelected;
   final Function(DateTime) onMonthChanged;
+  final Function(List<DateTime>) onWeekChanged;
+  final VoidCallback onDataChanged;
 
   const HomeScreen({
     super.key,
@@ -26,8 +29,15 @@ class HomeScreen extends StatelessWidget {
     required this.weekDays,
     required this.onDateSelected,
     required this.onMonthChanged,
+    required this.onWeekChanged,
+    required this.onDataChanged,
   });
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,25 +49,27 @@ class HomeScreen extends StatelessWidget {
             Column(
               children: [
                 // Header section with profile and notifications
-                HeaderSection(userName: userName),
+                HeaderSection(userName: widget.userName),
                 
                 const SizedBox(height: 8),
                 
                 // Month selector and streak badge
                 MonthStreakSection(
-                  monthStart: monthStart,
-                  streakDays: streakDays,
-                  onMonthChanged: onMonthChanged,
+                  monthStart: widget.monthStart,
+                  streakDays: widget.streakDays,
+                  onMonthChanged: widget.onMonthChanged,
                 ),
                 
                 const SizedBox(height: 20),
                 
-                // Week calendar
-                WeekDaySelector(
-                  weekDays: weekDays,
-                  selectedDate: selectedDate,
-                  onDateSelected: onDateSelected,
+                // Using a container widget for WeekDaySelector that handles rebuilding internally
+                WeekDaySelectorContainer(
+                  weekDays: widget.weekDays,
+                  selectedDate: widget.selectedDate,
+                  onDateSelected: widget.onDateSelected,
+                  onWeekChanged: widget.onWeekChanged,
                 ),
+                
                 const SizedBox(height: 10),
               ],
             ),
@@ -71,9 +83,9 @@ class HomeScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: CalorieProgressCircle(
-                        caloriesLeft: nutritionData.caloriesLeft,
-                        totalCalories: nutritionData.totalCalories,
-                        consumedCalories: nutritionData.consumedCalories,
+                        caloriesLeft: widget.nutritionData.caloriesLeft,
+                        totalCalories: widget.nutritionData.totalCalories,
+                        consumedCalories: widget.nutritionData.consumedCalories,
                       ),
                     ),
                     
@@ -84,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: nutritionData.goals.entries.map((entry) {
+                        children: widget.nutritionData.goals.entries.map((entry) {
                           final nutrient = entry.key;
                           final goal = entry.value;
                           return NutrientProgressBar(
@@ -98,8 +110,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     
-                    // Add extra bottom padding to ensure all content is visible
                     const SizedBox(height: 20),
+                    
+                    DailyMealsWidget(
+                      selectedDate: widget.selectedDate,
+                      onDataChanged: widget.onDataChanged,
+                    ),                  
                   ],
                 ),
               ),
