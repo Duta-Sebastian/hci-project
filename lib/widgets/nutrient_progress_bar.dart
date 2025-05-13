@@ -6,7 +6,6 @@ class NutrientProgressBar extends StatelessWidget {
   final int target;
   final String unit;
   final double progress;
-  final Color color;
 
   const NutrientProgressBar({
     super.key,
@@ -15,34 +14,52 @@ class NutrientProgressBar extends StatelessWidget {
     required this.target,
     required this.unit,
     required this.progress,
-    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Container(
+      width: 110,
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             '$current/$target$unit',
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               color: Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: Colors.grey.shade200,
-              color: color,
+              color: Color.fromRGBO(181, 241, 77, 1),
               minHeight: 8,
             ),
           ),

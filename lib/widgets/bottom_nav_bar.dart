@@ -13,6 +13,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
+      color: Color.fromRGBO(22, 22, 22, 1),
       shape: const CircularNotchedRectangle(),
       notchMargin: 8,
       child: SizedBox(
@@ -53,13 +54,13 @@ class BottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon, 
-            color: isSelected ? Colors.black : Colors.grey,
+            color: isSelected ? Color.fromRGBO(181, 241, 77, 1) : Colors.white,
           ),
           Text(
             label, 
             style: TextStyle(
               fontSize: 12, 
-              color: isSelected ? Colors.black : Colors.grey,
+              color: isSelected ? Color.fromRGBO(181, 241, 77, 1) : Colors.white,
             ),
           ),
         ],

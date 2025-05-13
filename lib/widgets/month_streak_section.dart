@@ -20,27 +20,7 @@ class MonthStreakSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Month dropdown
-          InkWell(
-            onTap: () => _showMonthPicker(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.calendar_today, size: 16),
-                  const SizedBox(width: 8),
-                  Text(DateFormat('MMMM').format(monthStart)),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_drop_down, size: 20),
-                ],
-              ),
-            ),
-          ),
-          // Streak badge
+                    // Streak badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -60,6 +40,26 @@ class MonthStreakSection extends StatelessWidget {
                 const SizedBox(width: 4),
                 const Icon(Icons.emoji_events, color: Colors.amber, size: 18),
               ],
+            ),
+          ),
+          // Month dropdown
+          InkWell(
+            onTap: () => _showMonthPicker(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.calendar_today, size: 16),
+                  const SizedBox(width: 8),
+                  Text(DateFormat('MMMM').format(monthStart)),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_drop_down, size: 20),
+                ],
+              ),
             ),
           ),
         ],
