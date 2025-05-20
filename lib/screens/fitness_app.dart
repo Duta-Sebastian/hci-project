@@ -59,10 +59,14 @@ class FitnessAppState extends State<FitnessApp> {
       final consumedProtein = (totals['protein'] as double).toInt();
       final consumedFat = (totals['fat'] as double).toInt();
       
-      const caloriesGoal = 2300;
-      const carbsGoal = 232;
-      const proteinGoal = 280;
-      const fatGoal = 110;
+      // Get default nutrition goals for the user
+      final defaultData = NutritionData.defaultGoals();
+      
+      // Use calculated target values instead of preset constants
+      final caloriesGoal = defaultData.totalCalories;
+      final carbsGoal = defaultData.goals['Carbs']!.target;
+      final proteinGoal = defaultData.goals['Protein']!.target;
+      final fatGoal = defaultData.goals['Fat']!.target;
       
       debugPrint('Nutrition goals: $caloriesGoal calories, $carbsGoal g carbs, $proteinGoal g protein, $fatGoal g fat');
       debugPrint('Meals for date $date: ${totals['meals']}');

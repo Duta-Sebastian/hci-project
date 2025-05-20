@@ -38,7 +38,7 @@ class MealDatabase {
       fat REAL NOT NULL,
       mealType TEXT NOT NULL,
       date TEXT NOT NULL
-    );
+    )
     ''');
     await db.execute('''
     CREATE TABLE users(
