@@ -45,10 +45,10 @@ class AccountScreen extends StatelessWidget {
                         Stack(
                           alignment: Alignment.bottomRight,
                           children: [
-                            const CircleAvatar(
-                              radius: 40,
-                              backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
-                            ),
+                            // const CircleAvatar(
+                            //   radius: 40,
+                            //   backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
+                            // ),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,

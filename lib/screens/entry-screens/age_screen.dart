@@ -1,13 +1,13 @@
 // lib/screens/onboarding/age_screen.dart
 import 'package:flutter/material.dart';
-import 'package:project/screens/activity_level_screen.dart';
-import '../../widgets/custom_button.dart';
+import 'package:project/screens/entry-screens/activity_level_screen.dart';
+import 'package:project/widgets/custom_button.dart';
 
 
 class AgeScreen extends StatefulWidget {
   final String gender;
   
-  const AgeScreen({Key? key, required this.gender}) : super(key: key);
+  const AgeScreen({super.key, required this.gender});
 
   @override
   State<AgeScreen> createState() => _AgeScreenState();

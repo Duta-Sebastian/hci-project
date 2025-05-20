@@ -9,7 +9,6 @@ class UserModel {
   static int weightGoal = 65; // Add this for weight goal
   static String activityLevel = "Lightly active";
   static String goal = "Lose weight"; // Main goal
-  static String pace = "0.5"; // Add this for weight loss/gain pace
   
   static void updateUser(String newName, String newEmail) {
     name = newName;
@@ -33,7 +32,4 @@ class UserModel {
     weightGoal = newWeightGoal;
   }
   
-  static void setPace(String newPace) {
-    pace = newPace;
-  }
 }

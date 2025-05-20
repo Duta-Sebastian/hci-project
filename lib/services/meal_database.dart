@@ -1,6 +1,7 @@
 // lib/services/meal_database.dart
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:project/models/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/meal.dart';
 
@@ -37,8 +38,38 @@ class MealDatabase {
       fat REAL NOT NULL,
       mealType TEXT NOT NULL,
       date TEXT NOT NULL
-    )
+    );
     ''');
+    await db.execute('''
+    CREATE TABLE users(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      age INTEGER NOT NULL,
+      height INTEGER NOT NULL,
+      weight INTEGER NOT NULL,
+      weightGoal INTEGER NOT NULL,
+      activityLevel TEXT NOT NULL,
+      gender TEXT NOT NULL
+      )
+    ''');
+  }
+
+  Future<int> addUser() async {
+    final db = await database;
+    
+    Map<String, dynamic> userData = {
+      'name': UserModel.name,
+      'email': UserModel.email,
+      'age': UserModel.age,
+      'height': UserModel.height,
+      'weight': UserModel.weight,
+      'weightGoal': UserModel.weightGoal,
+      'activityLevel': UserModel.activityLevel,
+      'gender': UserModel.gender
+    };
+    
+    return await db.insert('users', userData);
   }
 
   // Add a new meal to the database
@@ -181,4 +212,27 @@ class MealDatabase {
     final db = await instance.database;
     db.close();
   }
+
+  Future<bool> getUser() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('users');
+    
+    if (maps.isNotEmpty) {
+      final userData = maps.first;
+      
+      UserModel.name = userData['name'];
+      UserModel.email = userData['email'];
+      UserModel.age = userData['age'];
+      UserModel.height = userData['height'];
+      UserModel.weight = userData['weight'];
+      UserModel.weightGoal = userData['weightGoal'];
+      UserModel.activityLevel = userData['activityLevel'];
+      UserModel.gender = userData['gender'];
+      
+      return true;
+    }
+    
+    return false;
+  }
+  
 }

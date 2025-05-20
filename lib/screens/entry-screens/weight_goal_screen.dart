@@ -1,8 +1,8 @@
 // lib/screens/onboarding/weight_goal_screen.dart
 import 'package:flutter/material.dart';
-import '../../widgets/custom_button.dart';
-import '../../models/user_model.dart';
-import 'plan_summary_screen.dart'; // Import plan summary screen
+import 'package:project/models/user_model.dart';
+import 'package:project/screens/entry-screens/plan_summary_screen.dart';
+import 'package:project/widgets/custom_button.dart';
 
 class WeightGoalScreen extends StatefulWidget {
   final String gender;
@@ -12,13 +12,13 @@ class WeightGoalScreen extends StatefulWidget {
   final int weight;
   
   const WeightGoalScreen({
-    Key? key, 
+    super.key, 
     required this.gender, 
     required this.age,
     required this.activityLevel,
     required this.height,
     required this.weight,
-  }) : super(key: key);
+  });
 
   @override
   State<WeightGoalScreen> createState() => _WeightGoalScreenState();
@@ -147,11 +147,6 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                   
                   // Save the main goal
                   UserModel.setGoal(mainGoal);
-                  
-                  // Calculate and save pace
-                  final weightDifference = (widget.weight - selectedWeightGoal).abs();
-                  final pace = (weightDifference > 0) ? (weightDifference / 12).toStringAsFixed(1) : "0";
-                  UserModel.setPace(pace);
                   
                   // Navigate to plan summary screen
                   Navigator.push(

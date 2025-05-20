@@ -1,7 +1,7 @@
 // lib/screens/onboarding/activity_level_screen.dart
 import 'package:flutter/material.dart';
-import '../../widgets/custom_button.dart';
-import 'height_screen.dart'; // Changed to navigate to height screen next
+import 'package:project/screens/entry-screens/height_screen.dart';
+import 'package:project/widgets/custom_button.dart';
 
 class ActivityLevelScreen extends StatefulWidget {
   final String gender;
@@ -9,10 +9,10 @@ class ActivityLevelScreen extends StatefulWidget {
   
   // Removed height and weight parameters since they come later in the flow
   const ActivityLevelScreen({
-    Key? key, 
+    super.key, 
     required this.gender, 
     required this.age,
-  }) : super(key: key);
+  });
 
   @override
   State<ActivityLevelScreen> createState() => _ActivityLevelScreenState();

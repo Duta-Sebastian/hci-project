@@ -1,10 +1,10 @@
 // lib/screens/gender_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
-import 'age_screen.dart';
+import 'entry-screens/age_screen.dart';
 
 class GenderScreen extends StatefulWidget {
-  const GenderScreen({Key? key}) : super(key: key);
+  const GenderScreen({super.key});
 
   @override
   State<GenderScreen> createState() => _GenderScreenState();

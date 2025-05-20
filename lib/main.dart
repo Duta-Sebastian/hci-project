@@ -1,13 +1,17 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/fitness_app.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'services/meal_database.dart';
-import 'screens/welcome_screen.dart'; 
+import 'screens/entry-screens/welcome_screen.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final isFirstTime = prefs.getBool('isFirstTime') ?? true;
   
   final dbPath = await getDatabasesPath();
   final path = join(dbPath, 'meals.db');
@@ -18,12 +22,20 @@ void main() async {
   
   final yesterday = DateTime.now().subtract(const Duration(days: 1));
   await db.addSampleData(yesterday);
+
+  if (!isFirstTime) {
+    await db.getUser();  
+  }
   
-  runApp(const MyApp());
+  runApp(MyApp(isFirstTime: isFirstTime));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isFirstTime;
+  const MyApp({
+    super.key,
+    required this.isFirstTime,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +52,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       
-      home: const WelcomeScreen(), 
-      routes: {
-        '/fitness_app': (context) => const FitnessApp(),
-        '/welcome': (context) => const WelcomeScreen(),
-      },
+      home: isFirstTime ? WelcomeScreen() : const FitnessApp(), 
     );
   }
 }

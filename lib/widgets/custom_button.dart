@@ -7,11 +7,11 @@ class CustomButton extends StatelessWidget {
   final bool isPrimary;
   
   const CustomButton({
-    Key? key, 
+    super.key, 
     required this.text, 
     this.onPressed, // Remove 'required' here
     this.isPrimary = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

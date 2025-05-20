@@ -1,28 +1,26 @@
-// lib/screens/onboarding/weight_screen.dart
+// lib/screens/onboarding/height_screen.dart
 import 'package:flutter/material.dart';
-import '../../widgets/custom_button.dart';
-import 'weight_goal_screen.dart'; // Import the new weight goal screen
+import 'package:project/screens/entry-screens/weight_screen.dart';
+import 'package:project/widgets/custom_button.dart';
 
-class WeightScreen extends StatefulWidget {
+class HeightScreen extends StatefulWidget {
   final String gender;
   final int age;
   final String activityLevel;
-  final int height;
   
-  const WeightScreen({
-    Key? key, 
+  const HeightScreen({
+    super.key, 
     required this.gender, 
     required this.age,
     required this.activityLevel,
-    required this.height
-  }) : super(key: key);
+  });
 
   @override
-  State<WeightScreen> createState() => _WeightScreenState();
+  State<HeightScreen> createState() => _HeightScreenState();
 }
 
-class _WeightScreenState extends State<WeightScreen> {
-  int selectedWeight = 65;
+class _HeightScreenState extends State<HeightScreen> {
+  int selectedHeight = 165; // cm
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +41,7 @@ class _WeightScreenState extends State<WeightScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'What is your weight?',
+                'What is your height?',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -56,7 +54,6 @@ class _WeightScreenState extends State<WeightScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: const Color(0xFFB3FF65)), // Green border
                 ),
                 child: Column(
                   children: [
@@ -64,7 +61,7 @@ class _WeightScreenState extends State<WeightScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          selectedWeight.toString(),
+                          selectedHeight.toString(),
                           style: const TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
@@ -72,7 +69,7 @@ class _WeightScreenState extends State<WeightScreen> {
                         ),
                         const SizedBox(width: 10),
                         const Text(
-                          'kg',
+                          'cm',
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.grey,
@@ -82,16 +79,16 @@ class _WeightScreenState extends State<WeightScreen> {
                     ),
                     const SizedBox(height: 20),
                     Slider(
-                      value: selectedWeight.toDouble(),
-                      min: 40,
-                      max: 150,
-                      divisions: 110,
+                      value: selectedHeight.toDouble(),
+                      min: 120,
+                      max: 220,
+                      divisions: 100,
                       activeColor: const Color(0xFFB3FF65), // Green accent
                       inactiveColor: Colors.grey.shade300,
                       thumbColor: const Color(0xFFB3FF65), // Green thumb
                       onChanged: (double value) {
                         setState(() {
-                          selectedWeight = value.round();
+                          selectedHeight = value.round();
                         });
                       },
                     ),
@@ -100,19 +97,17 @@ class _WeightScreenState extends State<WeightScreen> {
               ),
               const Spacer(),
               CustomButton(
-                text: 'Continue', // Changed from "Finish Setup" to "Continue"
+                text: 'Continue',
                 isPrimary: true, // Purple button
                 onPressed: () {
-                  // Navigate to the weight goal screen instead of account screen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => WeightGoalScreen(
+                      builder: (context) => WeightScreen(
                         gender: widget.gender,
                         age: widget.age,
-                        height: widget.height,
-                        activityLevel: widget.activityLevel,
-                        weight: selectedWeight,
+                        activityLevel: widget.activityLevel, // Pass activity level along
+                        height: selectedHeight,
                       ),
                     ),
                   );

@@ -1,10 +1,10 @@
 // lib/screens/goal_screen.dart
 import 'package:flutter/material.dart';
-import '../widgets/custom_button.dart';
-import 'gender_screen.dart';
+import 'package:project/screens/gender_screen.dart';
+import 'package:project/widgets/custom_button.dart';
 
 class GoalScreen extends StatefulWidget {
-  const GoalScreen({Key? key}) : super(key: key);
+  const GoalScreen({super.key});
 
   @override
   State<GoalScreen> createState() => _GoalScreenState();

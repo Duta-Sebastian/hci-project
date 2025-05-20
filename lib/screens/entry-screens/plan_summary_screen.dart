@@ -1,7 +1,9 @@
 // lib/screens/onboarding/plan_summary_screen.dart
 import 'package:flutter/material.dart';
-import '../../widgets/custom_button.dart';
-import '../screens/fitness_app.dart';
+import 'package:project/screens/fitness_app.dart';
+import 'package:project/services/meal_database.dart';
+import 'package:project/widgets/custom_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class PlanSummaryScreen extends StatelessWidget {
@@ -14,7 +16,7 @@ class PlanSummaryScreen extends StatelessWidget {
   final String mainGoal;
   
   const PlanSummaryScreen({
-    Key? key, 
+    super.key, 
     required this.gender, 
     required this.age,
     required this.activityLevel,
@@ -22,7 +24,7 @@ class PlanSummaryScreen extends StatelessWidget {
     required this.weight,
     required this.weightGoal,
     required this.mainGoal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +109,10 @@ class PlanSummaryScreen extends StatelessWidget {
               CustomButton(
                 text: "Let's go",
                 isPrimary: true,
-                onPressed: () {
+                onPressed: () async {
+                  MealDatabase.instance.addUser();
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setBool('isFirstTime', false);
                   // Navigate to the fitness app
                   Navigator.pushAndRemoveUntil(
                     context,

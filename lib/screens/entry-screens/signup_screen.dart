@@ -1,19 +1,21 @@
-// lib/screens/login_screen.dart
+// lib/screens/signup_screen.dart
 import 'package:flutter/material.dart';
-import '../widgets/gradient_background.dart';
-import '../widgets/logo.dart';
-import '../widgets/custom_button.dart';
-import '../models/user_model.dart'; // Add this import
-import 'account_screen.dart'; // Add this import
+import 'package:project/models/user_model.dart';
+import 'package:project/screens/entry-screens/goal_screen.dart';
+import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/gradient_background.dart';
+import 'package:project/widgets/logo.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+
+class SignupScreen extends StatelessWidget {
+  const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Add these controllers
+    final nameController = TextEditingController();
+    final surnameController = TextEditingController();
     final emailController = TextEditingController();
-    final passwordController = TextEditingController();
     
     return Scaffold(
       body: GradientBackground(
@@ -30,7 +32,7 @@ class LoginScreen extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Email',
+                      'Name',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
@@ -39,7 +41,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: emailController, // Add this line
+                    controller: nameController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -57,7 +59,7 @@ class LoginScreen extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Password',
+                      'Surname',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
@@ -66,8 +68,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: passwordController, // Add this line
-                    obscureText: true,
+                    controller: surnameController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -81,34 +82,65 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // Handle forgot password
-                      },
-                      child: const Text(
-                        'Forgot my password',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
+                  // Email field
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Email',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                   CustomButton(
-                    text: 'Log In',
+                    text: 'Create an account',
                     onPressed: () {
-                      // Replace this with the following code
-                      // We'll keep the same name but update the email
-                      UserModel.updateUser("Maria Di Martino", emailController.text);
+                      // Validate inputs
+                      if (nameController.text.isEmpty || 
+                          surnameController.text.isEmpty || 
+                          emailController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in all fields'),
+                          ),
+                        );
+                        return;
+                      }
                       
-                      // Navigate to account screen
+                      // Create full name from name + surname
+                      String fullName = "${nameController.text} ${surnameController.text}";
+                      
+                      // Use the email entered by the user
+                      String email = emailController.text;
+                      
+                      // Save the user data
+                      UserModel.updateUser(fullName, email);
+                      
+                      // Navigate to goal screen (first onboarding step)
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AccountScreen(),
+                          builder: (context) => const GoalScreen(),
                         ),
                       );
                     },

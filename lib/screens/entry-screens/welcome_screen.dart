@@ -1,10 +1,11 @@
 // lib/screens/welcome_screen.dart
 import 'package:flutter/material.dart';
-import '../widgets/gradient_background.dart';
-import '../widgets/logo.dart'; 
-import '../widgets/custom_button.dart';
-import 'signup_screen.dart';
-import 'login_screen.dart';
+import 'package:project/screens/entry-screens/login_screen.dart';
+import 'package:project/screens/entry-screens/signup_screen.dart';
+import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/gradient_background.dart';
+import 'package:project/widgets/logo.dart';
+
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
