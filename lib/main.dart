@@ -4,6 +4,7 @@ import 'screens/fitness_app.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'services/meal_database.dart';
+import 'screens/welcome_screen.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +33,18 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+      
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFE6B9FF),
+          secondary: const Color(0xFFB6FF66),
+        ),
       ),
-      home: const FitnessApp(),
+      
+      home: const WelcomeScreen(), 
+      routes: {
+        '/fitness_app': (context) => const FitnessApp(),
+        '/welcome': (context) => const WelcomeScreen(),
+      },
     );
   }
 }
