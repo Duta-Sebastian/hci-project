@@ -86,17 +86,17 @@ class AnalyticsCaloriesChart extends StatelessWidget {
     final averageDaily = (totalConsumed / 7).round();
     final percentage = ((totalConsumed / weeklyGoal) * 100).round();
     
-    const double baseBarHeight = 50.0; // Height for 100% (goal)
-    const double maxBarHeight = 75.0;  // Maximum bar height (150% of goal)
+    const double baseBarHeight = 40.0; // Height for 100% (goal)
+    const double maxBarHeight = 50.0;  // Maximum bar height to prevent overflow
     
     return Container(
-      constraints: const BoxConstraints(maxHeight: 300), // Add height constraint
+      constraints: const BoxConstraints(maxHeight: 280),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Goal line indicator
           Container(
-            height: 25, // Reduced from 30
+            height: 20,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerRight,
             child: Row(
@@ -105,14 +105,14 @@ class AnalyticsCaloriesChart extends StatelessWidget {
               children: [
                 Container(
                   height: 2,
-                  width: 15, // Reduced from 20
+                  width: 15,
                   color: Colors.green[600],
                 ),
                 const SizedBox(width: 6),
                 Text(
                   'Goal: $dailyGoal kcal',
                   style: TextStyle(
-                    fontSize: 11, // Reduced from 12
+                    fontSize: 11,
                     color: Colors.green[700],
                     fontWeight: FontWeight.w600,
                   ),
@@ -123,7 +123,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
           
           // Bar chart with proper goal line overlay
           Container(
-            height: 80, // Reduced from 120
+            height: 75,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Stack(
               children: [
@@ -131,7 +131,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                 Positioned(
                   left: 16,
                   right: 16,
-                  bottom: baseBarHeight + 14, // Position at 100% goal level + space for labels
+                  bottom: baseBarHeight + 14, // Position at 100% goal level
                   child: Container(
                     height: 1,
                     color: Colors.green[600],
@@ -148,18 +148,16 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                     double value = values[index];
                     
                     Color barColor;
-                    if (value >= 0.8 && value <= 1.0) {
-                      barColor = Colors.green[400]!;
-                    } else if (value > 1.0) {
-                      barColor = Colors.red[400]!;
+                    if (value > 1.0) {
+                      barColor = Colors.red[300]!; // Light red when over goal
                     } else {
-                      barColor = Colors.orange[400]!;
+                      barColor = Colors.purple[300]!; // Purple for normal/under goal
                     }
                     
                     // Calculate bar height: goal (1.0) = baseBarHeight, cap at maxBarHeight
                     double barHeight = baseBarHeight * value;
                     if (barHeight > maxBarHeight) {
-                      barHeight = maxBarHeight;
+                      barHeight = maxBarHeight; // Strict cap to prevent overflow
                     }
                     
                     return Flexible(
@@ -168,7 +166,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            width: 16, // Reduced from 20
+                            width: 16,
                             height: barHeight,
                             decoration: BoxDecoration(
                               color: barColor,
@@ -179,7 +177,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                           Text(
                             label,
                             style: TextStyle(
-                              fontSize: 9, // Reduced from 10
+                              fontSize: 9,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
                             ),
@@ -193,12 +191,12 @@ class AnalyticsCaloriesChart extends StatelessWidget {
             ),
           ),
           
-          const SizedBox(height: 12), // Reduced from 16
+          const SizedBox(height: 12),
           
           // Compact Statistics Card
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(12), // Reduced from 16
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.grey[50],
               borderRadius: BorderRadius.circular(8),
@@ -214,14 +212,14 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                     Text(
                       'Average calories per day',
                       style: TextStyle(
-                        fontSize: 11, // Reduced from 12
+                        fontSize: 11,
                         color: Colors.grey[600],
                       ),
                     ),
                     Text(
                       '$averageDaily',
                       style: const TextStyle(
-                        fontSize: 14, // Reduced from 16
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -229,7 +227,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                   ],
                 ),
                 
-                const SizedBox(height: 8), // Reduced from 12
+                const SizedBox(height: 8),
                 
                 // Total consumed and percentage
                 Row(
@@ -242,7 +240,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                         Text(
                           '$totalConsumed',
                           style: const TextStyle(
-                            fontSize: 18, // Reduced from 20
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
@@ -250,7 +248,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                         Text(
                           'weekly calories consumed',
                           style: TextStyle(
-                            fontSize: 9, // Reduced from 10
+                            fontSize: 9,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -262,7 +260,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                         Icon(
                           Icons.arrow_forward,
                           color: Colors.green,
-                          size: 14, // Reduced from 16
+                          size: 14,
                         ),
                         const SizedBox(width: 4),
                         Column(
@@ -272,7 +270,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                             Text(
                               '$percentage%',
                               style: const TextStyle(
-                                fontSize: 18, // Reduced from 20
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green,
                               ),
@@ -280,7 +278,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                             Text(
                               'of target reached',
                               style: TextStyle(
-                                fontSize: 9, // Reduced from 10
+                                fontSize: 9,
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -291,14 +289,14 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                   ],
                 ),
                 
-                const SizedBox(height: 8), // Reduced from 12
+                const SizedBox(height: 12),
                 
                 // Best and worst days
                 Row(
                   children: [
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(8), // Reduced from 10
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.green[50],
                           borderRadius: BorderRadius.circular(6),
@@ -311,22 +309,15 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                             Text(
                               'Tuesday',
                               style: TextStyle(
-                                fontSize: 11, // Reduced from 12
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.green[700],
                               ),
                             ),
                             Text(
-                              'the best day of calories',
+                              'best day (${(dailyGoal * 0.98).round()} kcal)',
                               style: TextStyle(
-                                fontSize: 8, // Reduced from 9
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              'consumed (${(dailyGoal * 0.98).round()} kcal)',
-                              style: TextStyle(
-                                fontSize: 8, // Reduced from 9
+                                fontSize: 8,
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -334,10 +325,10 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6), // Reduced from 8
+                    const SizedBox(width: 6),
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(8), // Reduced from 10
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.red[50],
                           borderRadius: BorderRadius.circular(6),
@@ -350,22 +341,15 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                             Text(
                               'Friday',
                               style: TextStyle(
-                                fontSize: 11, // Reduced from 12
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red[700],
                               ),
                             ),
                             Text(
-                              'the worst day of calories',
+                              'worst day (${(dailyGoal * 1.35).round()} kcal)',
                               style: TextStyle(
-                                fontSize: 8, // Reduced from 9
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              'consumed (${(dailyGoal * 1.35).round()} kcal)',
-                              style: TextStyle(
-                                fontSize: 8, // Reduced from 9
+                                fontSize: 8,
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -384,46 +368,365 @@ class AnalyticsCaloriesChart extends StatelessWidget {
   }
 
   Widget _buildBarChart() {
-    List<String> labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-    List<double> values = [0.88, 0.92, 0.85, 0.78];
-
-    return Container(
-      height: 160, // Reduced from 200
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: labels.asMap().entries.map((entry) {
-          int index = entry.key;
-          String label = entry.value;
-          double value = values[index];
+    // Monthly data
+    final totalMonthlyConsumed = 71200; // From Figma
+    final averageMonthly = 2440; // From Figma
+    final percentage = 103; // From Figma
+    final dailyGoal = nutritionData.totalCalories;
+    
+    // Days breakdown from Figma
+    final daysWithinGoal = 8;
+    final daysOverGoal = 14;
+    final daysUnderGoal = 9;
+    
+    // Sample daily data for the histogram (30 days) - as percentages of daily goal
+    List<double> dailyValues = [
+      0.8, 0.9, 1.1, 0.7, 1.3, 0.85, 0.95, // Week 1
+      1.0, 0.9, 0.8, 1.2, 0.75, 0.9, 1.05, // Week 2  
+      0.85, 1.1, 0.95, 0.8, 1.4, 0.9, 0.85, // Week 3
+      1.0, 0.95, 0.8, 1.15, 0.9, 1.25, 0.85, 1.0, 0.95 // Week 4+
+    ];
+    
+    const double baseBarHeight = 50.0; // Height for 100% (goal)
+    const double maxBarHeight = 75.0;  // Maximum bar height (150% of goal)
+    
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
           
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 20, // Reduced from 24
-                height: 100 * value, // Reduced from 140
-                decoration: BoxDecoration(
-                  color: Colors.purple[300],
-                  borderRadius: BorderRadius.circular(4),
+          // Goal line indicator (like week view)
+          Container(
+            height: 25,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 2,
+                  width: 15,
+                  color: Colors.green[600],
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10, // Reduced from 11
-                  color: Colors.grey[600],
+                const SizedBox(width: 6),
+                Text(
+                  'Goal: $dailyGoal kcal',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.green[700],
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
-          );
-        }).toList(),
+              ],
+            ),
+          ),
+          
+          // Bar chart with goal line (like week view)
+          Container(
+            height: 100,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Stack(
+              children: [
+                // Goal line overlay
+                Positioned(
+                  left: 50,
+                  right: 16,
+                  bottom: baseBarHeight + 14, // Position at 100% goal level + space for labels
+                  child: Container(
+                    height: 1,
+                    color: Colors.green[600],
+                  ),
+                ),
+                
+                // Y-axis labels and bars
+                Row(
+                  children: [
+                    // Y-axis labels
+                    SizedBox(
+                      width: 35,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text('3k', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                          Text('2k', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                          Text('1k', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                          Text('0', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                        ],
+                      ),
+                    ),
+                    // Bars with goal line logic
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            height: 70,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: dailyValues.take(30).map((value) {
+                                Color barColor;
+                                if (value > 1.0) {
+                                  barColor = Colors.red[300]!; // Light red when over goal
+                                } else {
+                                  barColor = Colors.purple[300]!; // Purple for normal/under goal
+                                }
+                                
+                                // Calculate bar height: goal (1.0) = baseBarHeight
+                                double barHeight = baseBarHeight * value;
+                                if (barHeight > maxBarHeight) {
+                                  barHeight = maxBarHeight;
+                                }
+                                
+                                return Container(
+                                  width: 4,
+                                  height: barHeight,
+                                  decoration: BoxDecoration(
+                                    color: barColor,
+                                    borderRadius: BorderRadius.circular(1),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          // X-axis labels
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('1', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                              Text('5', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                              Text('10', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                              Text('15', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                              Text('20', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                              Text('25', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                              Text('30', style: TextStyle(fontSize: 9, color: Colors.grey[600])),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Statistics section (like week view)
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Average calories per month
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Average calories per month',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      '$averageMonthly',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 8),
+                
+                // Total monthly and percentage
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$totalMonthlyConsumed',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          'total monthly calories consumed',
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.green,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$percentage%',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                            Text(
+                              'of target reached',
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Goal achievement breakdown (like week view)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green[50],
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.green[200]!),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$daysWithinGoal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[700],
+                              ),
+                            ),
+                            Text(
+                              'number of days\nwithin goal',
+                              style: TextStyle(
+                                fontSize: 8,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red[50],
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.red[200]!),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$daysOverGoal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[700],
+                              ),
+                            ),
+                            Text(
+                              'number of days\nover goal',
+                              style: TextStyle(
+                                fontSize: 8,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.orange[50],
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.orange[200]!),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$daysUnderGoal',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange[700],
+                              ),
+                            ),
+                            Text(
+                              'number of days\nunder goal',
+                              style: TextStyle(
+                                fontSize: 8,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 20), // Bottom padding
+        ],
       ),
     );
   }
+
 }
 
 class CaloriesPieChartPainter extends CustomPainter {
