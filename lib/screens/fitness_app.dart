@@ -220,7 +220,8 @@ class FitnessAppState extends State<FitnessApp> {
               onWeekChanged: _onWeekChanged,
               onDataChanged: _onDataChanged,
             ),
-            const AnalyticsScreen(),
+            // CHANGED LINE: Pass real nutrition data to analytics
+            AnalyticsScreen(nutritionData: nutritionData, selectedDate: _selectedDate),
             const CommunityScreen(),
             const AccountScreen(),
           ],

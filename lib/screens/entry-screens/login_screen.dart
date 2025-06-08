@@ -1,7 +1,6 @@
-// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/models/user_model.dart';
-import 'package:project/screens/account_screen.dart';
+import 'package:project/screens/fitness_app.dart'; // Same destination as signup
 import 'package:project/widgets/custom_button.dart';
 import 'package:project/widgets/gradient_background.dart';
 import 'package:project/widgets/logo.dart';
@@ -39,7 +38,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: emailController, // Add this line
+                    controller: emailController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -66,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: passwordController, // Add this line
+                    controller: passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       filled: true,
@@ -100,16 +99,16 @@ class LoginScreen extends StatelessWidget {
                   CustomButton(
                     text: 'Log In',
                     onPressed: () {
-                      // Replace this with the following code
-                      // We'll keep the same name but update the email
+                      // Update user model
                       UserModel.updateUser("Maria Di Martino", emailController.text);
                       
-                      // Navigate to account screen
-                      Navigator.push(
+                      // Navigate to SAME destination as signup - FitnessApp
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AccountScreen(),
+                          builder: (context) => const FitnessApp(),
                         ),
+                        (route) => false, // Remove all previous routes
                       );
                     },
                   ),

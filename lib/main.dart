@@ -1,7 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'screens/fitness_app.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'services/meal_database.dart';
@@ -52,7 +51,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       
-      home: isFirstTime ? WelcomeScreen() : const FitnessApp(), 
+      //home: isFirstTime ? WelcomeScreen() : const FitnessApp(), 
+      home: const WelcomeScreen(),
     );
   }
 }

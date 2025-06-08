@@ -6,7 +6,7 @@ class UserModel {
   static int age = 25;
   static int height = 165;
   static int weight = 75;
-  static int weightGoal = 65; // Add this for weight goal
+  static int weightGoal = 65; 
   static String activityLevel = "Lightly active";
   static String goal = "Lose weight"; // Main goal
   
