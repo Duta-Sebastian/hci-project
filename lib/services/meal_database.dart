@@ -168,21 +168,21 @@ class MealDatabase {
     // Sample breakfast meals
     final breakfast = [
       Meal(
-        name: 'Eggs (3 pieces)',
+        name: 'Eggs',
         calories: 150,
         nutrients: {'carbs': 1.4, 'protein': 3.5, 'fat': 14.5},
         mealType: 'breakfast',
         date: date,
       ),
       Meal(
-        name: 'Bread (1 piece)',
+        name: 'Bread',
         calories: 250,
         nutrients: {'carbs': 3.5, 'protein': 1.5, 'fat': 10.0},
         mealType: 'breakfast',
         date: date,
       ),
       Meal(
-        name: 'Tomato (80g)',
+        name: 'Tomato',
         calories: 90,
         nutrients: {'carbs': 5.0, 'protein': 0.5, 'fat': 5.45},
         mealType: 'breakfast',

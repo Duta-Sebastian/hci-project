@@ -20,17 +20,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   String _mealType = 'breakfast';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _availableFoodItems = [];
-  // Track operations
+  Set<String> _existingMealNames = {}; // Track existing meals for current type
   bool _isAddingFood = false;
-  // Add a queue for operations
-  final List<_PendingOperation> _pendingOperations = [];
-  // Track whether we're currently processing the queue
-  bool _isProcessingQueue = false;
   
   @override
   void initState() {
     super.initState();
-    // Sample food items
     _availableFoodItems = [
       {
         'name': 'Eggs',
@@ -52,119 +47,108 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         'calories': 105,
         'nutrients': {'carbs': 27.0, 'protein': 1.3, 'fat': 0.4},
       },
+      {
+        'name': 'Chicken Breast',
+        'calories': 165,
+        'nutrients': {'carbs': 0.0, 'protein': 31.0, 'fat': 3.6},
+      },
+      {
+        'name': 'Rice',
+        'calories': 130,
+        'nutrients': {'carbs': 28.0, 'protein': 2.7, 'fat': 0.3},
+      },
     ];
+    _loadExistingMeals();
   }
 
-  // Queue an operation instead of executing it immediately
-  void _queueFoodItemOperation(Map<String, dynamic> item) {
-    setState(() {
-      _isAddingFood = true;
-      _pendingOperations.add(_PendingOperation(item, _mealType));
-    });
-    
-    // Start processing the queue if not already processing
-    if (!_isProcessingQueue) {
-      _processOperationQueue();
+  Future<void> _loadExistingMeals() async {
+    try {
+      final meals = await MealDatabase.instance.getMealsGroupedByTypeForDate(_selectedDate);
+      setState(() {
+        _existingMealNames = (meals[_mealType] ?? []).map((meal) => meal.name).toSet();
+      });
+    } catch (e) {
+      debugPrint('Error loading existing meals: $e');
     }
   }
-  
-  // Process operations one at a time
-  Future<void> _processOperationQueue() async {
-    if (_pendingOperations.isEmpty) {
-      setState(() {
-        _isAddingFood = false;
-        _isProcessingQueue = false;
-      });
-      return;
-    }
-    
+
+  Future<void> _addFoodItem(Map<String, dynamic> item) async {
     setState(() {
-      _isProcessingQueue = true;
+      _isAddingFood = true;
     });
     
-    while (_pendingOperations.isNotEmpty) {
-      if (!mounted) return; // Safety check
+    try {
+      final meal = Meal(
+        name: item['name'],
+        calories: item['calories'],
+        nutrients: {
+          'carbs': item['nutrients']['carbs'] as double,
+          'protein': item['nutrients']['protein'] as double,
+          'fat': item['nutrients']['fat'] as double,
+        },
+        mealType: _mealType,
+        date: _selectedDate,
+      );
       
-      final operation = _pendingOperations.first;
+      await MealDatabase.instance.addMeal(meal);
       
-      try {
-        // Create a meal from the operation data
-        final meal = Meal(
-          name: operation.item['name'],
-          calories: operation.item['calories'],
-          nutrients: {
-            'carbs': operation.item['nutrients']['carbs'] as double,
-            'protein': operation.item['nutrients']['protein'] as double,
-            'fat': operation.item['nutrients']['fat'] as double,
-          },
-          mealType: operation.mealType,
-          date: _selectedDate,
+      if (mounted) {
+        // Add to existing meals set to hide it from the list
+        setState(() {
+          _existingMealNames.add(item['name']);
+        });
+        
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added ${item['name']} to $_mealType'),
+            duration: const Duration(milliseconds: 800),
+            backgroundColor: Colors.green[600],
+          ),
         );
         
-        // Save to database
-        await MealDatabase.instance.addMeal(meal);
-        // Only show message if we're still mounted
-      
-        if (mounted) {
-          // Clear any existing SnackBars before showing new one
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Added ${operation.item['name']} to ${operation.mealType}'),
-              duration: const Duration(milliseconds: 500), // Shorter duration
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          // Clear any existing SnackBars before showing error
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error adding food: $e'),
-              duration: const Duration(seconds: 1),
-            ),
-          );
+        // Call onDataChanged for instant update
+        if (widget.onDataChanged != null) {
+          widget.onDataChanged!();
         }
       }
-      
-      // Remove the processed operation
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error adding food: $e'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.red[600],
+          ),
+        );
+      }
+    } finally {
       if (mounted) {
         setState(() {
-          _pendingOperations.removeAt(0);
+          _isAddingFood = false;
         });
       }
-      
-      // Small delay between operations
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
-    
-    // All operations processed
-    if (mounted) {
-      setState(() {
-        _isAddingFood = false;
-        _isProcessingQueue = false;
-      });
     }
   }
 
   List<Map<String, dynamic>> _getFilteredItems() {
-    if (_searchController.text.isEmpty) {
-      return _availableFoodItems;
-    }
-    return _availableFoodItems
-        .where((item) => item['name'].toString().toLowerCase().contains(_searchController.text.toLowerCase()))
+    final baseFilter = _searchController.text.isEmpty 
+        ? _availableFoodItems
+        : _availableFoodItems
+            .where((item) => item['name'].toString().toLowerCase().contains(_searchController.text.toLowerCase()))
+            .toList();
+    
+    // Filter out items that already exist in the current meal type
+    return baseFilter
+        .where((item) => !_existingMealNames.contains(item['name']))
         .toList();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    if (widget.onDataChanged != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.onDataChanged!();
-    });
-    }
+    // Don't call onDataChanged in dispose to prevent crashes
     super.dispose();
   }
 
@@ -183,61 +167,31 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         ),
       ),
       body: WillPopScope(
-        // Prevent back navigation during operations
         onWillPop: () async {
           return !_isAddingFood;
         },
         child: Column(
           children: [
-            // Loading indicator
             if (_isAddingFood) 
-              LinearProgressIndicator(
-                // Show progress based on remaining operations
-                value: _pendingOperations.isEmpty ? null : 1 - (_pendingOperations.length / (_pendingOperations.length + 1)),
-              ),
+              const LinearProgressIndicator(),
               
+            // Meal Type Buttons
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: _isAddingFood 
-                  ? null 
-                  : () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => SimpleDialog(
-                          title: const Text('Select Meal Type'),
-                          children: [
-                            SimpleDialogOption(
-                              onPressed: () {
-                                setState(() { _mealType = 'breakfast'; });
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Breakfast'),
-                            ),
-                            SimpleDialogOption(
-                              onPressed: () {
-                                setState(() { _mealType = 'lunch'; });
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Lunch'),
-                            ),
-                            SimpleDialogOption(
-                              onPressed: () {
-                                setState(() { _mealType = 'dinner'; });
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Dinner'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isAddingFood ? Colors.grey[300] : Colors.green[300],
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  minimumSize: const Size(double.infinity, 40),
-                ),
-                child: Text(_mealType.capitalize()),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildMealTypeButton('breakfast', 'Breakfast'),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildMealTypeButton('lunch', 'Lunch'),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildMealTypeButton('dinner', 'Dinner'),
+                  ),
+                ],
               ),
             ),
             
@@ -290,21 +244,59 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 physics: _isAddingFood ? const NeverScrollableScrollPhysics() : null,
                 itemBuilder: (context, index) {
                   final item = _getFilteredItems()[index];
+                  final isAvailable = !_existingMealNames.contains(item['name']);
+                  
                   return InkWell(
-                    onTap: _isAddingFood ? null : () => _queueFoodItemOperation(item),
+                    onTap: (_isAddingFood || !isAvailable) ? null : () => _addFoodItem(item),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: _isAddingFood ? Colors.grey[100] : null,
+                        color: !isAvailable 
+                          ? Colors.grey[100] 
+                          : _isAddingFood 
+                            ? Colors.grey[50] 
+                            : null,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         title: Text(
                           item['name'].toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: !isAvailable ? Colors.grey : null,
+                          ),
                         ),
-                        subtitle: Text('${item['calories']} kcal'),
-                        trailing: Row(
+                        subtitle: Text(
+                          '${item['calories']} kcal',
+                          style: TextStyle(
+                            color: !isAvailable ? Colors.grey : null,
+                          ),
+                        ),
+                        trailing: !isAvailable 
+                          ? Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.orange[100],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.orange[300]!),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.edit, size: 16, color: Colors.orange[700]),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Use counter',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.orange[700],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Column(
@@ -357,6 +349,40 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     );
   }
   
+  Widget _buildMealTypeButton(String type, String label) {
+    final isSelected = _mealType == type;
+    
+    return ElevatedButton(
+      onPressed: _isAddingFood 
+        ? null 
+        : () {
+            setState(() {
+              _mealType = type;
+            });
+            _loadExistingMeals(); // Reload existing meals for new type
+          },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected 
+          ? Colors.green[300] 
+          : Colors.grey[200],
+        foregroundColor: isSelected 
+          ? Colors.white 
+          : Colors.grey[700],
+        elevation: isSelected ? 2 : 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+    );
+  }
+  
   Widget _buildCategoryChip(String label, {bool isSelected = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
@@ -371,20 +397,5 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
             },
       ),
     );
-  }
-}
-
-// Helper class to track pending operations
-class _PendingOperation {
-  final Map<String, dynamic> item;
-  final String mealType;
-  
-  _PendingOperation(this.item, this.mealType);
-}
-
-// Extension to capitalize the first letter
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }
