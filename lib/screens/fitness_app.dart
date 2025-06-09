@@ -31,6 +31,12 @@ class FitnessAppState extends State<FitnessApp> {
   late DateTime _monthStart;
   late List<DateTime> _weekDays;
 
+  // Add a stream controller to manage data updates
+  bool _isUpdating = false;
+  
+  // Callback to refresh meals list
+  VoidCallback? _refreshMealsCallback;
+
   @override
   void initState() {
     super.initState();
@@ -47,8 +53,11 @@ class FitnessAppState extends State<FitnessApp> {
   }
 
   Future<void> _loadNutritionDataForDate(DateTime date) async {
+    if (_isUpdating) return; // Prevent concurrent updates
+    
     setState(() {
       _isLoading = true;
+      _isUpdating = true;
     });
     
     try {
@@ -95,6 +104,7 @@ class FitnessAppState extends State<FitnessApp> {
             },
           );
           _isLoading = false;
+          _isUpdating = false;
         });
       }
     } catch (e) {
@@ -102,6 +112,7 @@ class FitnessAppState extends State<FitnessApp> {
         setState(() {
           nutritionData = NutritionData.defaultGoals();
           _isLoading = false;
+          _isUpdating = false;
         });
       }
     }
@@ -181,8 +192,73 @@ class FitnessAppState extends State<FitnessApp> {
     });
   }
   
+  // Improved data change handler that updates both nutrition data and meals list
   void _onDataChanged() {
-    _loadNutritionDataForDate(_selectedDate);
+    if (_isUpdating) return; // Prevent multiple concurrent updates
+    
+    // Update nutrition data
+    _updateNutritionDataOnly();
+    
+    // Refresh the daily meals widget to show new additions
+    _refreshMealsCallback?.call();
+  }
+  
+  // Method to register the meals refresh callback
+  void _setMealsRefreshCallback(VoidCallback callback) {
+    _refreshMealsCallback = callback;
+  }
+
+  Future<void> _updateNutritionDataOnly() async {
+    if (_isUpdating) return;
+    
+    setState(() {
+      _isUpdating = true;
+    });
+    
+    try {
+      final totals = await MealDatabase.instance.calculateNutritionTotalsForDate(_selectedDate);
+      
+      final consumedCalories = totals['calories'] as int;
+      final consumedCarbs = (totals['carbs'] as double).toInt();
+      final consumedProtein = (totals['protein'] as double).toInt();
+      final consumedFat = (totals['fat'] as double).toInt();
+      
+      // Get default nutrition goals for the user
+      final defaultData = NutritionData.defaultGoals();
+      
+      if (mounted) {
+        setState(() {
+          nutritionData = NutritionData(
+            totalCalories: defaultData.totalCalories,
+            consumedCalories: consumedCalories,
+            goals: {
+              'Carbs': NutrientGoal(
+                target: defaultData.goals['Carbs']!.target, 
+                current: consumedCarbs, 
+                unit: 'g'
+              ),
+              'Protein': NutrientGoal(
+                target: defaultData.goals['Protein']!.target, 
+                current: consumedProtein, 
+                unit: 'g'
+              ),
+              'Fat': NutrientGoal(
+                target: defaultData.goals['Fat']!.target, 
+                current: consumedFat, 
+                unit: 'g'
+              ),
+            },
+          );
+          _isUpdating = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isUpdating = false;
+        });
+      }
+    }
   }
 
   @override
@@ -219,8 +295,8 @@ class FitnessAppState extends State<FitnessApp> {
               onMonthChanged: _onMonthChanged,
               onWeekChanged: _onWeekChanged,
               onDataChanged: _onDataChanged,
+              onMealsRefreshCallbackSet: _setMealsRefreshCallback,
             ),
-            // CHANGED LINE: Pass real nutrition data to analytics
             AnalyticsScreen(nutritionData: nutritionData, selectedDate: _selectedDate),
             const CommunityScreen(),
             const AccountScreen(),
@@ -235,6 +311,7 @@ class FitnessAppState extends State<FitnessApp> {
       floatingActionButton: showFAB
           ? FloatingActionButton(
               onPressed: () {
+                // Navigate without any callbacks to prevent crashes
                 Navigator.push(
                   context,
                   MaterialPageRoute(
