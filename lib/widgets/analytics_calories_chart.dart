@@ -23,62 +23,72 @@ class AnalyticsCaloriesChart extends StatelessWidget {
   }
 
   Widget _buildPieChart() {
+    // Calculate if over goal and by how much
+    final isOverGoal = nutritionData.caloriesLeft < 0;
+    final caloriesOver = isOverGoal ? -nutritionData.caloriesLeft : 0;
+    
     return Container(
-      height: 180, // Reduced from 220
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 140, // Reduced from 180
-            height: 140,
-            child: CustomPaint(
-              painter: CaloriesPieChartPainter(
-                consumedCalories: nutritionData.consumedCalories,
-                totalCalories: nutritionData.totalCalories,
-                caloriesLeft: nutritionData.caloriesLeft,
-              ),
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
+      height: 250, // Increased height for better centering
+      padding: const EdgeInsets.symmetric(vertical: 20), // Add vertical padding
+      child: Center( // Wrap in Center widget for better centering
+        child: Container(
+          width: 160, // Slightly increased size
+          height: 160,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              Text(
-                '${nutritionData.caloriesLeft}',
-                style: const TextStyle(
-                  fontSize: 28, // Reduced from 32
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              CustomPaint(
+                size: const Size(160, 160), // Explicit size
+                painter: CaloriesPieChartPainter(
+                  consumedCalories: nutritionData.consumedCalories,
+                  totalCalories: nutritionData.totalCalories,
+                  caloriesLeft: nutritionData.caloriesLeft,
+                  caloriesOver: caloriesOver,
                 ),
               ),
-              Row(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.local_fire_department,
-                    size: 14, // Reduced from 16
-                    color: Colors.orange.shade700,
-                  ),
-                  const SizedBox(width: 4),
-                  const Text(
-                    'Calories left',
-                    style: TextStyle(
-                      fontSize: 11, // Reduced from 12
-                      color: Colors.grey,
+                  Text(
+                    isOverGoal ? '+$caloriesOver' : '${nutritionData.caloriesLeft}',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.local_fire_department,
+                        size: 14,
+                        color: Colors.orange.shade700,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isOverGoal ? 'Calories over goal' : 'Calories left',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildWeekAnalytics() {
     List<String> labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    List<double> values = [0.95, 0.98, 0.85, 0.92, 1.35, 0.88, 1.1];
+    // Modified values to ensure purple bars are clearly under goal line
+    List<double> values = [0.75, 0.85, 0.65, 0.80, 1.35, 0.70, 0.90];
     
     final dailyGoal = nutritionData.totalCalories;
     final weeklyGoal = dailyGoal * 7;
@@ -151,7 +161,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                     if (value > 1.0) {
                       barColor = Colors.red[300]!; // Light red when over goal
                     } else {
-                      barColor = Colors.purple[300]!; // Purple for normal/under goal
+                      barColor = Colors.purple[300]!; // Purple for under goal (these will be beneath the line)
                     }
                     
                     // Calculate bar height: goal (1.0) = baseBarHeight, cap at maxBarHeight
@@ -315,7 +325,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'best day (${(dailyGoal * 0.98).round()} kcal)',
+                              'best day (${(dailyGoal * 0.85).round()} kcal)',
                               style: TextStyle(
                                 fontSize: 8,
                                 color: Colors.grey[600],
@@ -733,11 +743,13 @@ class CaloriesPieChartPainter extends CustomPainter {
   final int consumedCalories;
   final int totalCalories;
   final int caloriesLeft;
+  final int caloriesOver;
 
   CaloriesPieChartPainter({
     required this.consumedCalories,
     required this.totalCalories,
     required this.caloriesLeft,
+    required this.caloriesOver,
   });
 
   @override
@@ -751,29 +763,40 @@ class CaloriesPieChartPainter extends CustomPainter {
     final consumedAngle = (consumedCalories / totalCalories) * 2 * 3.14159;
     final remainingAngle = (caloriesLeft / totalCalories) * 2 * 3.14159;
     
-    paint.color = Colors.purple.shade300;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -1.57,
-      consumedAngle,
-      true,
-      paint,
-    );
-    
-    paint.color = Colors.purple.shade50;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -1.57 + consumedAngle,
-      remainingAngle,
-      true,
-      paint,
-    );
+    // Determine colors based on calorie status
+    if (caloriesLeft < 0) {
+      // Over goal - always red when over any amount
+      paint.color = Colors.red.shade400;
+      
+      // Draw full circle when over goal
+      canvas.drawCircle(center, radius, paint);
+    } else {
+      // Under or at goal - use purple
+      paint.color = Colors.purple.shade300;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -1.57,
+        consumedAngle,
+        true,
+        paint,
+      );
+      
+      paint.color = Colors.purple.shade50;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -1.57 + consumedAngle,
+        remainingAngle,
+        true,
+        paint,
+      );
+    }
   }
 
   @override
   bool shouldRepaint(CaloriesPieChartPainter oldDelegate) {
     return oldDelegate.consumedCalories != consumedCalories ||
            oldDelegate.totalCalories != totalCalories ||
-           oldDelegate.caloriesLeft != caloriesLeft;
+           oldDelegate.caloriesLeft != caloriesLeft ||
+           oldDelegate.caloriesOver != caloriesOver;
   }
 }
