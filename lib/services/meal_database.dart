@@ -78,6 +78,37 @@ class MealDatabase {
     return await db.insert('meals', meal.toJson());
   }
 
+  // IMPROVED: Add multiple meals in a single transaction (prevents ANR)
+  Future<List<int>> addMeals(List<Meal> meals) async {
+    final db = await database;
+    final List<int> results = [];
+    
+    await db.transaction((txn) async {
+      for (final meal in meals) {
+        final id = await txn.insert('meals', meal.toJson());
+        results.add(id);
+      }
+    });
+    
+    return results;
+  }
+
+  // IMPROVED: Optimized version for adding multiple identical meals (like quantity picker)
+  Future<List<int>> addMultipleMeals(Meal baseMeal, int quantity) async {
+    final db = await database;
+    final List<int> results = [];
+    
+    await db.transaction((txn) async {
+      final mealData = baseMeal.toJson();
+      for (int i = 0; i < quantity; i++) {
+        final id = await txn.insert('meals', mealData);
+        results.add(id);
+      }
+    });
+    
+    return results;
+  }
+
   // Get all meals for a specific date
   Future<List<Meal>> getMealsByDate(DateTime date) async {
     final db = await database;
@@ -163,6 +194,24 @@ class MealDatabase {
     );
   }
 
+  // IMPROVED: Delete multiple meals in a transaction
+  Future<int> deleteMeals(List<int> ids) async {
+    final db = await database;
+    int deletedCount = 0;
+    
+    await db.transaction((txn) async {
+      for (final id in ids) {
+        deletedCount += await txn.delete(
+          'meals',
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
+    });
+    
+    return deletedCount;
+  }
+
   // Add sample data for testing
   Future<void> addSampleData(DateTime date) async {
     // Sample breakfast meals
@@ -201,10 +250,8 @@ class MealDatabase {
       ),
     ];
     
-    // Add sample meals
-    for (var meal in [...breakfast, ...lunch]) {
-      await addMeal(meal);
-    }
+    // IMPROVED: Use batch insert for sample data
+    await addMeals([...breakfast, ...lunch]);
   }
 
   // Close database
@@ -234,5 +281,4 @@ class MealDatabase {
     
     return false;
   }
-  
 }

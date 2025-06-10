@@ -18,45 +18,42 @@ class AddEntryScreen extends StatefulWidget {
 class _AddEntryScreenState extends State<AddEntryScreen> {
   final DateTime _selectedDate = DateTime.now();
   String _mealType = 'breakfast';
+  String _selectedCategory = 'All';
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _availableFoodItems = [];
-  Set<String> _existingMealNames = {}; // Track existing meals for current type
+  Set<String> _existingMealNames = {};
   bool _isAddingFood = false;
   
   @override
   void initState() {
     super.initState();
     _availableFoodItems = [
-      {
-        'name': 'Eggs',
-        'calories': 140,
-        'nutrients': {'carbs': 1.1, 'protein': 13.0, 'fat': 9.5},
-      },
-      {
-        'name': 'Bread',
-        'calories': 265,
-        'nutrients': {'carbs': 49.0, 'protein': 9.0, 'fat': 3.2},
-      },
-      {
-        'name': 'Tomato',
-        'calories': 22,
-        'nutrients': {'carbs': 4.8, 'protein': 1.1, 'fat': 0.2},
-      },
-      {
-        'name': 'Banana',
-        'calories': 105,
-        'nutrients': {'carbs': 27.0, 'protein': 1.3, 'fat': 0.4},
-      },
-      {
-        'name': 'Chicken Breast',
-        'calories': 165,
-        'nutrients': {'carbs': 0.0, 'protein': 31.0, 'fat': 3.6},
-      },
-      {
-        'name': 'Rice',
-        'calories': 130,
-        'nutrients': {'carbs': 28.0, 'protein': 2.7, 'fat': 0.3},
-      },
+      // Protein
+      {'name': 'Eggs', 'calories': 140, 'nutrients': {'carbs': 1.1, 'protein': 13.0, 'fat': 9.5}, 'category': 'Protein'},
+      {'name': 'Chicken Breast', 'calories': 165, 'nutrients': {'carbs': 0.0, 'protein': 31.0, 'fat': 3.6}, 'category': 'Protein'},
+      {'name': 'Grilled Chicken Breast', 'calories': 165, 'nutrients': {'carbs': 0.0, 'protein': 31.0, 'fat': 3.6}, 'category': 'Protein'},
+      {'name': 'Salmon Fillet', 'calories': 206, 'nutrients': {'carbs': 0.0, 'protein': 22.0, 'fat': 12.0}, 'category': 'Protein'},
+      
+      // Grains
+      {'name': 'Bread', 'calories': 265, 'nutrients': {'carbs': 49.0, 'protein': 9.0, 'fat': 3.2}, 'category': 'Grains'},
+      {'name': 'Rice', 'calories': 130, 'nutrients': {'carbs': 28.0, 'protein': 2.7, 'fat': 0.3}, 'category': 'Grains'},
+      {'name': 'Brown Rice', 'calories': 216, 'nutrients': {'carbs': 45.0, 'protein': 5.0, 'fat': 1.8}, 'category': 'Grains'},
+      {'name': 'Quinoa', 'calories': 222, 'nutrients': {'carbs': 39.0, 'protein': 8.0, 'fat': 3.6}, 'category': 'Grains'},
+      
+      // Dairy
+      {'name': 'Greek Yogurt', 'calories': 100, 'nutrients': {'carbs': 6.0, 'protein': 17.0, 'fat': 0.4}, 'category': 'Dairy'},
+      
+      // Fruits
+      {'name': 'Banana', 'calories': 105, 'nutrients': {'carbs': 27.0, 'protein': 1.3, 'fat': 0.4}, 'category': 'Fruits'},
+      {'name': 'Tomato', 'calories': 22, 'nutrients': {'carbs': 4.8, 'protein': 1.1, 'fat': 0.2}, 'category': 'Fruits'},
+      
+      // Vegetables
+      {'name': 'Steamed Broccoli', 'calories': 34, 'nutrients': {'carbs': 7.0, 'protein': 3.0, 'fat': 0.4}, 'category': 'Vegetables'},
+      {'name': 'Sweet Potato', 'calories': 112, 'nutrients': {'carbs': 26.0, 'protein': 2.0, 'fat': 0.1}, 'category': 'Vegetables'},
+      
+      // Fats
+      {'name': 'Almonds', 'calories': 164, 'nutrients': {'carbs': 6.0, 'protein': 6.0, 'fat': 14.0}, 'category': 'Fats'},
+      {'name': 'Avocado', 'calories': 234, 'nutrients': {'carbs': 12.0, 'protein': 3.0, 'fat': 21.0}, 'category': 'Fats'},
     ];
     _loadExistingMeals();
   }
@@ -64,64 +61,298 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   Future<void> _loadExistingMeals() async {
     try {
       final meals = await MealDatabase.instance.getMealsGroupedByTypeForDate(_selectedDate);
-      setState(() {
-        _existingMealNames = (meals[_mealType] ?? []).map((meal) => meal.name).toSet();
-      });
+      if (mounted) {
+        setState(() {
+          _existingMealNames = (meals[_mealType] ?? []).map((meal) => meal.name).toSet();
+        });
+      }
     } catch (e) {
       debugPrint('Error loading existing meals: $e');
     }
   }
 
+  void _showTopSnackBar(String message, {bool isError = false}) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+    
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + 20, // Position below status bar
+        left: 20,
+        right: 20,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isError ? Colors.red[600] : Colors.green[600],
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isError ? Icons.error : Icons.check_circle,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    
+    overlay.insert(overlayEntry);
+    
+    // Remove after duration
+    Future.delayed(Duration(milliseconds: isError ? 2000 : 800), () {
+      overlayEntry.remove();
+    });
+  }
+
+  Future<int?> _showQuantityPicker(BuildContext context, String foodName) async {
+    int selectedQuantity = 1;
+    final item = _availableFoodItems.firstWhere((food) => food['name'] == foodName);
+    
+    return await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final totalCalories = (item['calories'] as int) * selectedQuantity;
+            final totalCarbs = (item['nutrients']['carbs'] as double) * selectedQuantity;
+            final totalProtein = (item['nutrients']['protein'] as double) * selectedQuantity;
+            final totalFat = (item['nutrients']['fat'] as double) * selectedQuantity;
+            
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                'Add $foodName',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'How many servings would you like to add?',
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: selectedQuantity > 1 
+                            ? () {
+                                setDialogState(() {
+                                  selectedQuantity--;
+                                });
+                              }
+                            : null,
+                        icon: const Icon(Icons.remove_circle_outline),
+                        iconSize: 32,
+                        color: selectedQuantity > 1 ? Colors.red[600] : Colors.grey[400],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '$selectedQuantity',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: selectedQuantity < 10
+                            ? () {
+                                setDialogState(() {
+                                  selectedQuantity++;
+                                });
+                              }
+                            : null,
+                        icon: const Icon(Icons.add_circle_outline),
+                        iconSize: 32,
+                        color: selectedQuantity < 10 ? Colors.green[600] : Colors.grey[400],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '$totalCalories kcal',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  '${totalCarbs.toStringAsFixed(1)}g',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const Text(
+                                  'Carbs',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  '${totalProtein.toStringAsFixed(1)}g',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const Text(
+                                  'Protein',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  '${totalFat.toStringAsFixed(1)}g',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const Text(
+                                  'Fat',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(null),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(selectedQuantity),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple.shade300,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Add'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _addFoodItem(Map<String, dynamic> item) async {
+    final quantity = await _showQuantityPicker(context, item['name']);
+    if (quantity == null || quantity <= 0) return;
+    
     setState(() {
       _isAddingFood = true;
     });
     
     try {
-      final meal = Meal(
-        name: item['name'],
-        calories: item['calories'],
-        nutrients: {
-          'carbs': item['nutrients']['carbs'] as double,
-          'protein': item['nutrients']['protein'] as double,
-          'fat': item['nutrients']['fat'] as double,
-        },
-        mealType: _mealType,
-        date: _selectedDate,
-      );
-      
-      await MealDatabase.instance.addMeal(meal);
+      for (int i = 0; i < quantity; i++) {
+        final meal = Meal(
+          name: item['name'],
+          calories: item['calories'],
+          nutrients: {
+            'carbs': item['nutrients']['carbs'] as double,
+            'protein': item['nutrients']['protein'] as double,
+            'fat': item['nutrients']['fat'] as double,
+          },
+          mealType: _mealType,
+          date: _selectedDate,
+        );
+        
+        await MealDatabase.instance.addMeal(meal);
+      }
       
       if (mounted) {
-        // Add to existing meals set to hide it from the list
         setState(() {
           _existingMealNames.add(item['name']);
         });
         
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Added ${item['name']} to $_mealType'),
-            duration: const Duration(milliseconds: 800),
-            backgroundColor: Colors.green[600],
-          ),
-        );
-        
-        // Call onDataChanged for instant update
-        if (widget.onDataChanged != null) {
-          widget.onDataChanged!();
-        }
+        _showTopSnackBar('Added $quantity x ${item['name']} to $_mealType');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error adding food: $e'),
-            duration: const Duration(seconds: 2),
-            backgroundColor: Colors.red[600],
-          ),
-        );
+        _showTopSnackBar('Error adding food: $e', isError: true);
       }
     } finally {
       if (mounted) {
@@ -133,14 +364,19 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   }
 
   List<Map<String, dynamic>> _getFilteredItems() {
-    final baseFilter = _searchController.text.isEmpty 
-        ? _availableFoodItems
-        : _availableFoodItems
-            .where((item) => item['name'].toString().toLowerCase().contains(_searchController.text.toLowerCase()))
-            .toList();
+    var items = _availableFoodItems;
     
-    // Filter out items that already exist in the current meal type
-    return baseFilter
+    if (_selectedCategory != 'All') {
+      items = items.where((item) => item['category'] == _selectedCategory).toList();
+    }
+    
+    if (_searchController.text.isNotEmpty) {
+      items = items
+          .where((item) => item['name'].toString().toLowerCase().contains(_searchController.text.toLowerCase()))
+          .toList();
+    }
+    
+    return items
         .where((item) => !_existingMealNames.contains(item['name']))
         .toList();
   }
@@ -148,7 +384,13 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    // Don't call onDataChanged in dispose to prevent crashes
+    
+    if (widget.onDataChanged != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onDataChanged!();
+      });
+    }
+    
     super.dispose();
   }
 
@@ -174,8 +416,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
           children: [
             if (_isAddingFood) 
               const LinearProgressIndicator(),
-              
-            // Meal Type Buttons
+            
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -195,7 +436,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               ),
             ),
             
-            // Search bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
@@ -217,7 +457,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               ),
             ),
             
-            // Category tabs
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -225,18 +464,18 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 physics: _isAddingFood ? const NeverScrollableScrollPhysics() : null,
                 child: Row(
                   children: [
-                    _buildCategoryChip('All', isSelected: true),
-                    _buildCategoryChip('Grains'),
-                    _buildCategoryChip('Dairy'),
-                    _buildCategoryChip('Protein'),
-                    _buildCategoryChip('Fruits'),
-                    _buildCategoryChip('Fats'),
+                    _buildCategoryChip('All', isSelected: _selectedCategory == 'All'),
+                    _buildCategoryChip('Grains', isSelected: _selectedCategory == 'Grains'),
+                    _buildCategoryChip('Dairy', isSelected: _selectedCategory == 'Dairy'),
+                    _buildCategoryChip('Protein', isSelected: _selectedCategory == 'Protein'),
+                    _buildCategoryChip('Fruits', isSelected: _selectedCategory == 'Fruits'),
+                    _buildCategoryChip('Fats', isSelected: _selectedCategory == 'Fats'),
+                    _buildCategoryChip('Vegetables', isSelected: _selectedCategory == 'Vegetables'),
                   ],
                 ),
               ),
             ),
             
-            // Food items list
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
@@ -297,33 +536,33 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                               ),
                             )
                           : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('${(item['nutrients']['carbs'] as double).toStringAsFixed(1)} g'),
-                                const Text('Carbs', style: TextStyle(fontSize: 12)),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('${(item['nutrients']['carbs'] as double).toStringAsFixed(1)} g'),
+                                    const Text('Carbs', style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                                const SizedBox(width: 16),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('${(item['nutrients']['protein'] as double).toStringAsFixed(1)} g'),
+                                    const Text('Protein', style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                                const SizedBox(width: 16),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('${(item['nutrients']['fat'] as double).toStringAsFixed(1)} g'),
+                                    const Text('Fat', style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
                               ],
                             ),
-                            const SizedBox(width: 16),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('${(item['nutrients']['protein'] as double).toStringAsFixed(1)} g'),
-                                const Text('Protein', style: TextStyle(fontSize: 12)),
-                              ],
-                            ),
-                            const SizedBox(width: 16),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('${(item['nutrients']['fat'] as double).toStringAsFixed(1)} g'),
-                                const Text('Fat', style: TextStyle(fontSize: 12)),
-                              ],
-                            ),
-                          ],
-                        ),
                         enabled: !_isAddingFood,
                       ),
                     ),
@@ -338,10 +577,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         onPressed: _isAddingFood 
           ? null 
           : () {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Barcode scanner not implemented')),
-              );
+              _showTopSnackBar('Barcode scanner not implemented');
             },
         backgroundColor: _isAddingFood ? Colors.grey : Colors.purple[300],
         child: const Icon(Icons.qr_code_scanner),
@@ -359,7 +595,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
             setState(() {
               _mealType = type;
             });
-            _loadExistingMeals(); // Reload existing meals for new type
+            _loadExistingMeals();
           },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected 
@@ -393,7 +629,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         onSelected: _isAddingFood 
           ? null 
           : (selected) {
-              // Filter by category - not implemented in this simple version
+              setState(() {
+                _selectedCategory = label;
+              });
             },
       ),
     );
