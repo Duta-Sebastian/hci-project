@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/meal.dart';
-import '../services/meal_database.dart';
+import '../../models/meal.dart';
+import '../../services/meal_database.dart';
 
 class MealGroup {
   final String name;

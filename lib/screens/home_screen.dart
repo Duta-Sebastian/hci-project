@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/nutrition_data.dart';
-import 'package:project/widgets/calorie_progress_circle.dart';
-import 'package:project/widgets/daily_meals.dart';
-import 'package:project/widgets/header_section.dart';
-import 'package:project/widgets/month_streak_section.dart';
-import 'package:project/widgets/nutrient_progress_bar.dart';
-import 'package:project/widgets/week_day_selector_container.dart';
+import 'package:project/widgets/home_screen/calorie_progress_circle.dart';
+import 'package:project/widgets/home_screen/daily_meals.dart';
+import 'package:project/widgets/home_screen/header_section.dart';
+import 'package:project/widgets/home_screen/month_streak_section.dart';
+import 'package:project/widgets/home_screen/nutrient_progress_bar.dart';
+import 'package:project/widgets/home_screen/week_day_selector_container.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userName;

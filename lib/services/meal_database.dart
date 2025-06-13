@@ -1,4 +1,3 @@
-// lib/services/meal_database.dart
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:project/models/user_model.dart';
@@ -11,14 +10,12 @@ class MealDatabase {
 
   MealDatabase._init();
 
-  // Get database, initialize if needed
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('meals.db');
     return _database!;
   }
 
-  // Initialize the database
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
@@ -26,7 +23,6 @@ class MealDatabase {
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  // Create database tables
   Future _createDB(Database db, int version) async {
     await db.execute('''
     CREATE TABLE meals(
@@ -72,13 +68,11 @@ class MealDatabase {
     return await db.insert('users', userData);
   }
 
-  // Add a new meal to the database
   Future<int> addMeal(Meal meal) async {
     final db = await database;
     return await db.insert('meals', meal.toJson());
   }
 
-  // IMPROVED: Add multiple meals in a single transaction (prevents ANR)
   Future<List<int>> addMeals(List<Meal> meals) async {
     final db = await database;
     final List<int> results = [];
@@ -93,7 +87,6 @@ class MealDatabase {
     return results;
   }
 
-  // IMPROVED: Optimized version for adding multiple identical meals (like quantity picker)
   Future<List<int>> addMultipleMeals(Meal baseMeal, int quantity) async {
     final db = await database;
     final List<int> results = [];
@@ -108,28 +101,24 @@ class MealDatabase {
     
     return results;
   }
-
-  // Get all meals for a specific date
+  
   Future<List<Meal>> getMealsByDate(DateTime date) async {
     final db = await database;
     
-    // Format the date to match only year-month-day
     final dateString = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     
     final result = await db.query(
       'meals',
       where: "date LIKE ?",
-      whereArgs: ['$dateString%'],  // Use LIKE to match the date part
+      whereArgs: ['$dateString%'],
     );
 
     return result.map((json) => Meal.fromJson(json)).toList();
   }
 
-  // Get meals by type for a specific date
   Future<List<Meal>> getMealsByTypeAndDate(String mealType, DateTime date) async {
     final db = await database;
     
-    // Format the date to match only year-month-day
     final dateString = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     
     final result = await db.query(
@@ -141,7 +130,6 @@ class MealDatabase {
     return result.map((json) => Meal.fromJson(json)).toList();
   }
 
-  // Group meals by type for a date
   Future<Map<String, List<Meal>>> getMealsGroupedByTypeForDate(DateTime date) async {
     final meals = await getMealsByDate(date);
     
@@ -160,7 +148,6 @@ class MealDatabase {
     return groupedMeals;
   }
 
-  // Calculate nutrition totals for a date
   Future<Map<String, dynamic>> calculateNutritionTotalsForDate(DateTime date) async {
     final meals = await getMealsByDate(date);
     debugPrint('Meals for date $date: ${meals.length}');
@@ -184,7 +171,6 @@ class MealDatabase {
     };
   }
 
-  // Delete a meal
   Future<int> deleteMeal(int id) async {
     final db = await database;
     return await db.delete(
@@ -194,7 +180,6 @@ class MealDatabase {
     );
   }
 
-  // IMPROVED: Delete multiple meals in a transaction
   Future<int> deleteMeals(List<int> ids) async {
     final db = await database;
     int deletedCount = 0;
@@ -212,9 +197,7 @@ class MealDatabase {
     return deletedCount;
   }
 
-  // Add sample data for testing
   Future<void> addSampleData(DateTime date) async {
-    // Sample breakfast meals
     final breakfast = [
       Meal(
         name: 'Eggs',
@@ -239,7 +222,6 @@ class MealDatabase {
       ),
     ];
     
-    // Sample lunch meal
     final lunch = [
       Meal(
         name: 'Chicken Sandwich',
@@ -250,11 +232,9 @@ class MealDatabase {
       ),
     ];
     
-    // IMPROVED: Use batch insert for sample data
     await addMeals([...breakfast, ...lunch]);
   }
 
-  // Close database
   Future close() async {
     final db = await instance.database;
     db.close();

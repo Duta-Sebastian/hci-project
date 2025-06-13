@@ -1,7 +1,7 @@
-// lib/screens/gender_screen.dart
 import 'package:flutter/material.dart';
-import '../widgets/custom_button.dart';
-import 'entry-screens/age_screen.dart';
+import 'package:project/screens/entry-screens/age_screen.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
+
 
 class GenderScreen extends StatefulWidget {
   const GenderScreen({super.key});
@@ -15,12 +15,11 @@ class _GenderScreenState extends State<GenderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions to make responsive sizing
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,14 +46,13 @@ class _GenderScreenState extends State<GenderScreen> {
               ),
             ),
             
-            // Main content centered in the middle of the screen
             Expanded(
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildGenderCard('Female', 'female', screenWidth, screenHeight),
-                    SizedBox(width: screenWidth * 0.05), // Responsive spacing
+                    SizedBox(width: screenWidth * 0.05),
                     _buildGenderCard('Male', 'male', screenWidth, screenHeight),
                   ],
                 ),
@@ -88,10 +86,9 @@ class _GenderScreenState extends State<GenderScreen> {
   Widget _buildGenderCard(String label, String value, double screenWidth, double screenHeight) {
     final isSelected = selectedGender == value;
     
-    // Calculate card size based on screen dimensions
-    final cardWidth = screenWidth * 0.42; // 42% of screen width
-    final cardHeight = screenHeight * 0.27; // 27% of screen height
-    
+    final cardWidth = screenWidth * 0.42;
+    final cardHeight = screenHeight * 0.27;
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -120,14 +117,14 @@ class _GenderScreenState extends State<GenderScreen> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 20, // Even larger text
+                      fontSize: 20,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 Container(
-                  width: cardWidth * 0.75, // 75% of card width
-                  height: cardHeight * 0.5, // 50% of card height
+                  width: cardWidth * 0.75,
+                  height: cardHeight * 0.5,
                   decoration: BoxDecoration(
                     color: const Color(0xFFB3FF65),
                     borderRadius: BorderRadius.circular(15),
@@ -136,7 +133,7 @@ class _GenderScreenState extends State<GenderScreen> {
                     child: Icon(
                       value == 'female' ? Icons.female : Icons.male,
                       color: Colors.white,
-                      size: cardWidth * 0.3, // 30% of card width
+                      size: cardWidth * 0.3,
                     ),
                   ),
                 ),
@@ -156,7 +153,7 @@ class _GenderScreenState extends State<GenderScreen> {
                   child: const Icon(
                     Icons.check,
                     color: Colors.white,
-                    size: 24, // Larger checkmark
+                    size: 24,
                   ),
                 ),
               ),

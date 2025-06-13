@@ -1,8 +1,7 @@
-// lib/screens/onboarding/weight_goal_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/models/user_model.dart';
 import 'package:project/screens/entry-screens/plan_summary_screen.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 
 class WeightGoalScreen extends StatefulWidget {
   final String gender;
@@ -30,19 +29,18 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize weight goal to current weight as a starting point
     selectedWeightGoal = widget.weight;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -57,7 +55,7 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // White text
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 30),
@@ -66,7 +64,7 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: const Color(0xFFB3FF65)), // Green border
+                  border: Border.all(color: const Color(0xFFB3FF65)),
                 ),
                 child: Column(
                   children: [
@@ -96,9 +94,9 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                       min: 40,
                       max: 150,
                       divisions: 110,
-                      activeColor: const Color(0xFFB3FF65), // Green accent
+                      activeColor: const Color(0xFFB3FF65),
                       inactiveColor: Colors.grey.shade300,
-                      thumbColor: const Color(0xFFB3FF65), // Green thumb
+                      thumbColor: const Color(0xFFB3FF65),
                       onChanged: (double value) {
                         setState(() {
                           selectedWeightGoal = value.round();
@@ -106,7 +104,6 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                       },
                     ),
                     
-                    // Optional indicator showing relation to current weight
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Text(
@@ -123,9 +120,8 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
               const Spacer(),
               CustomButton(
                 text: 'Continue',
-                isPrimary: true, // Primary button
+                isPrimary: true,
                 onPressed: () {
-                  // Update user model with all collected data
                   UserModel.updateUserDetails(
                     widget.gender,
                     widget.age,
@@ -133,11 +129,9 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                     widget.weight,
                     widget.activityLevel,
                   );
-                  
-                  // Save the weight goal
+
                   UserModel.setWeightGoal(selectedWeightGoal);
                   
-                  // Determine main goal based on weight vs weight goal
                   String mainGoal = "Maintain weight";
                   if (selectedWeightGoal < widget.weight) {
                     mainGoal = "Lose weight";
@@ -145,10 +139,8 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
                     mainGoal = "Gain weight";
                   }
                   
-                  // Save the main goal
                   UserModel.setGoal(mainGoal);
                   
-                  // Navigate to plan summary screen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -172,7 +164,6 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
     );
   }
   
-  // Helper method to show text based on goal compared to current weight
   String _getWeightGoalText() {
     final difference = selectedWeightGoal - widget.weight;
     
@@ -185,7 +176,6 @@ class _WeightGoalScreenState extends State<WeightGoalScreen> {
     }
   }
   
-  // Helper method to get color based on goal
   Color _getWeightGoalColor() {
     final difference = selectedWeightGoal - widget.weight;
     

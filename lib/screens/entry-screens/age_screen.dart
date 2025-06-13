@@ -1,7 +1,6 @@
-// lib/screens/onboarding/age_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/screens/entry-screens/activity_level_screen.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 
 
 class AgeScreen extends StatefulWidget {

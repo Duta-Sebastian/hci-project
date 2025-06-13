@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/user_model.dart';
-import 'package:project/screens/fitness_app.dart'; // Same destination as signup
-import 'package:project/widgets/custom_button.dart';
-import 'package:project/widgets/gradient_background.dart';
-import 'package:project/widgets/logo.dart';
+import 'package:project/screens/fitness_app.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
+import 'package:project/widgets/entry_screens/gradient_background.dart';
+import 'package:project/widgets/entry_screens/logo.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Add these controllers
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     
@@ -84,7 +83,6 @@ class LoginScreen extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // Handle forgot password
                       },
                       child: const Text(
                         'Forgot my password',
@@ -99,16 +97,14 @@ class LoginScreen extends StatelessWidget {
                   CustomButton(
                     text: 'Log In',
                     onPressed: () {
-                      // Update user model
                       UserModel.updateUser("Maria Di Martino", emailController.text);
                       
-                      // Navigate to SAME destination as signup - FitnessApp
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const FitnessApp(),
                         ),
-                        (route) => false, // Remove all previous routes
+                        (route) => false,
                       );
                     },
                   ),

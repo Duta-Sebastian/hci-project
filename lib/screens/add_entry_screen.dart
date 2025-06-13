@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project/models/meal.dart';
-import '../services/meal_database.dart';
+import 'package:project/services/meal_database.dart';
 
 class AddEntryScreen extends StatefulWidget {
   final VoidCallback? onDataChanged;
@@ -77,7 +77,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     
     overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top + 20, // Position below status bar
+        top: MediaQuery.of(context).padding.top + 20,
         left: 20,
         right: 20,
         child: Material(
@@ -122,7 +122,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     
     overlay.insert(overlayEntry);
     
-    // Remove after duration
     Future.delayed(Duration(milliseconds: isError ? 2000 : 800), () {
       overlayEntry.remove();
     });

@@ -1,8 +1,7 @@
-// lib/screens/onboarding/plan_summary_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/screens/fitness_app.dart';
 import 'package:project/services/meal_database.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -29,7 +28,7 @@ class PlanSummaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -53,12 +52,11 @@ class PlanSummaryScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Gender and Age row
               Row(
                 children: [
                   _buildInfoCard(
                     'Gender',
-                    gender == "male" ? "M" : "F", // Just show first letter (F or M)
+                    gender == "male" ? "M" : "F",
                     flex: 1,
                   ),
                   const SizedBox(width: 10),
@@ -70,19 +68,16 @@ class PlanSummaryScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 15),
-              // Main goal
               _buildInfoCard(
                 'Main goal',
                 mainGoal,
               ),
               const SizedBox(height: 15),
-              // Activity level
               _buildInfoCard(
                 'Activity level',
                 activityLevel,
               ),
               const SizedBox(height: 15),
-              // Height and Weight row
               Row(
                 children: [
                   _buildInfoCard(
@@ -99,13 +94,11 @@ class PlanSummaryScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 15),
-              // Goal weight
               _buildInfoCard(
                 'Your goal weight',
                 '$weightGoal kg',
               ),
               const Spacer(),
-              // Final button
               CustomButton(
                 text: "Let's go",
                 isPrimary: true,
@@ -113,13 +106,12 @@ class PlanSummaryScreen extends StatelessWidget {
                   MealDatabase.instance.addUser();
                   final prefs = await SharedPreferences.getInstance();
                   prefs.setBool('isFirstTime', false);
-                  // Navigate to the fitness app
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const FitnessApp(),
                     ),
-                    (route) => false, // Remove all previous routes
+                    (route) => false,
                   );
                 },
               ),

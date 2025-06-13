@@ -1,13 +1,11 @@
-// lib/screens/onboarding/activity_level_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/screens/entry-screens/height_screen.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 
 class ActivityLevelScreen extends StatefulWidget {
   final String gender;
   final int age;
   
-  // Removed height and weight parameters since they come later in the flow
   const ActivityLevelScreen({
     super.key, 
     required this.gender, 
@@ -32,12 +30,12 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -52,7 +50,7 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // White text
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 30),
@@ -63,10 +61,9 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
               ),
               const Spacer(),
               CustomButton(
-                text: 'Continue', // Changed from "Finish Setup" to "Continue"
-                isPrimary: true, // Purple button
+                text: 'Continue',
+                isPrimary: true,
                 onPressed: () {
-                  // Navigate to the height screen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -99,7 +96,7 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white, // Always white background
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Stack(
@@ -112,7 +109,7 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFB3FF65), // Green accent
+                        color: const Color(0xFFB3FF65),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -132,14 +129,13 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
               ],
             ),
             
-            // Only show checkmark when selected
             if (isSelected)
               Positioned(
                 top: 8,
                 right: 8,
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xFFB3FF65), // Green checkmark
+                    color: Color(0xFFB3FF65),
                     shape: BoxShape.circle,
                   ),
                   padding: const EdgeInsets.all(2),
@@ -156,7 +152,6 @@ class _ActivityLevelScreenState extends State<ActivityLevelScreen> {
     );
   }
   
-  // Helper method to get appropriate icon for each activity level
   IconData _getActivityIcon(String level) {
     switch (level) {
       case 'Sedentary':
