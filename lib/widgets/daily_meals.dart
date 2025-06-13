@@ -134,18 +134,6 @@ class _DailyMealsWidgetState extends State<DailyMealsWidget> {
                   fontSize: 16,
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  // Handle "View all" action
-                },
-                child: const Text(
-                  'View all',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 8),
