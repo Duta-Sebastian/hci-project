@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/meal.dart';
-import '../services/meal_database.dart';
+import '../../models/meal.dart';
+import '../../services/meal_database.dart';
 
 class MealGroup {
   final String name;
@@ -132,18 +132,6 @@ class _DailyMealsWidgetState extends State<DailyMealsWidget> {
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Handle "View all" action
-                },
-                child: const Text(
-                  'View all',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
                 ),
               ),
             ],

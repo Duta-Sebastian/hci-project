@@ -1,7 +1,6 @@
-// lib/screens/goal_screen.dart
 import 'package:flutter/material.dart';
-import 'package:project/screens/gender_screen.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/screens/entry-screens/gender_screen.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 
 class GoalScreen extends StatefulWidget {
   const GoalScreen({super.key});
@@ -34,7 +33,7 @@ class _GoalScreenState extends State<GoalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

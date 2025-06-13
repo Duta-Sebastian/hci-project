@@ -1,7 +1,6 @@
-// lib/screens/onboarding/height_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/screens/entry-screens/weight_screen.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 
 class HeightScreen extends StatefulWidget {
   final String gender;
@@ -20,17 +19,17 @@ class HeightScreen extends StatefulWidget {
 }
 
 class _HeightScreenState extends State<HeightScreen> {
-  int selectedHeight = 165; // cm
+  int selectedHeight = 165;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -45,7 +44,7 @@ class _HeightScreenState extends State<HeightScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // White text
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 30),
@@ -83,9 +82,9 @@ class _HeightScreenState extends State<HeightScreen> {
                       min: 120,
                       max: 220,
                       divisions: 100,
-                      activeColor: const Color(0xFFB3FF65), // Green accent
+                      activeColor: const Color(0xFFB3FF65),
                       inactiveColor: Colors.grey.shade300,
-                      thumbColor: const Color(0xFFB3FF65), // Green thumb
+                      thumbColor: const Color(0xFFB3FF65),
                       onChanged: (double value) {
                         setState(() {
                           selectedHeight = value.round();
@@ -98,7 +97,7 @@ class _HeightScreenState extends State<HeightScreen> {
               const Spacer(),
               CustomButton(
                 text: 'Continue',
-                isPrimary: true, // Purple button
+                isPrimary: true,
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -106,7 +105,7 @@ class _HeightScreenState extends State<HeightScreen> {
                       builder: (context) => WeightScreen(
                         gender: widget.gender,
                         age: widget.age,
-                        activityLevel: widget.activityLevel, // Pass activity level along
+                        activityLevel: widget.activityLevel,
                         height: selectedHeight,
                       ),
                     ),

@@ -1,15 +1,14 @@
-// lib/widgets/custom_button.dart
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback? onPressed; // Make this nullable with ?
+  final VoidCallback? onPressed;
   final bool isPrimary;
   
   const CustomButton({
     super.key, 
     required this.text, 
-    this.onPressed, // Remove 'required' here
+    this.onPressed,
     this.isPrimary = true,
   });
 
@@ -19,7 +18,7 @@ class CustomButton extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: ElevatedButton(
-        onPressed: onPressed, // ElevatedButton handles null correctly
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary 
               ? const Color(0xFFE6B9FF) 

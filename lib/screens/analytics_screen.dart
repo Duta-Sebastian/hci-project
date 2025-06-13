@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/nutrition_data.dart';
-import '../widgets/analytics_tab_selector.dart';
-import '../widgets/analytics_calories_content.dart';
+import 'package:project/widgets/analytics/analytics_calories_content.dart';
+import 'package:project/widgets/analytics/analytics_tab_selector.dart';
 
 class AnalyticsScreen extends StatefulWidget {
   final NutritionData nutritionData;
@@ -18,7 +18,7 @@ class AnalyticsScreen extends StatefulWidget {
 }
 
 class _AnalyticsScreenState extends State<AnalyticsScreen> {
-  int selectedTabIndex = 1; // CALORIES tab selected by default
+  int selectedTabIndex = 1;
 
   final List<String> tabs = ['WEIGHT', 'CALORIES', 'MACROS', 'STREAK'];
 
@@ -29,10 +29,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'Analytics',
           style: TextStyle(
@@ -42,10 +38,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           ),
         ),
         centerTitle: false,
+        scrolledUnderElevation: 0,
       ),
       body: Column(
         children: [
-          // Tab Selector
           AnalyticsTabSelector(
             tabs: tabs,
             selectedIndex: selectedTabIndex,
@@ -56,7 +52,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             },
           ),
           
-          // Content based on selected tab
           Expanded(
             child: _buildTabContent(),
           ),
@@ -67,16 +62,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   Widget _buildTabContent() {
     switch (selectedTabIndex) {
-      case 0: // WEIGHT
+      case 0:
         return const _ComingSoonContent(title: 'Weight Analytics');
-      case 1: // CALORIES
+      case 1:
         return AnalyticsCaloriesContent(
           nutritionData: widget.nutritionData,
           selectedDate: widget.selectedDate,
         );
-      case 2: // MACROS
+      case 2:
         return const _ComingSoonContent(title: 'Macros Analytics');
-      case 3: // STREAK
+      case 3:
         return const _ComingSoonContent(title: 'Streak Analytics');
       default:
         return AnalyticsCaloriesContent(

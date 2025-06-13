@@ -1,10 +1,9 @@
-// lib/screens/welcome_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/screens/entry-screens/login_screen.dart';
 import 'package:project/screens/entry-screens/signup_screen.dart';
-import 'package:project/widgets/custom_button.dart';
-import 'package:project/widgets/gradient_background.dart';
-import 'package:project/widgets/logo.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
+import 'package:project/widgets/entry_screens/gradient_background.dart';
+import 'package:project/widgets/entry_screens/logo.dart';
 
 
 class WelcomeScreen extends StatelessWidget {
@@ -20,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Spacer(flex: 2),
-                const Logo(), // Updated class name
+                const Logo(),
                 const Spacer(flex: 2),
                 CustomButton(
                   text: 'Create an account',

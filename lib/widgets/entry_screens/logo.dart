@@ -1,4 +1,3 @@
-// lib/widgets/logo.dart
 import 'package:flutter/material.dart';
 
 class Logo extends StatelessWidget {
@@ -15,8 +14,8 @@ class Logo extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: const BoxDecoration(
-                color: Color(0xFFB6FF66), // Bright green
-                shape: BoxShape.circle,
+                color: Color(0xFFB6FF66),
+                shape: BoxShape.circle
               ),
             ),
             Row(
@@ -49,7 +48,7 @@ class Logo extends StatelessWidget {
               TextSpan(
                 text: 'SMART',
                 style: TextStyle(
-                  color: Color(0xFFD9A8FF), // Light purple
+                  color: Color(0xFFD9A8FF),
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -57,7 +56,7 @@ class Logo extends StatelessWidget {
               TextSpan(
                 text: 'BITE',
                 style: TextStyle(
-                  color: Color(0xFFB6FF66), // Bright green
+                  color: Color(0xFFB6FF66),
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),

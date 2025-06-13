@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/week_day_selector.dart';
+import 'package:project/widgets/home_screen/week_day_selector.dart';
 
 class WeekDaySelectorContainer extends StatefulWidget {
   final List<DateTime> weekDays;

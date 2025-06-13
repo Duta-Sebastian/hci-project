@@ -1,4 +1,3 @@
-// lib/widgets/gradient_background.dart
 import 'package:flutter/material.dart';
 
 class GradientBackground extends StatelessWidget {
@@ -14,9 +13,9 @@ class GradientBackground extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFFF0E6FF), // Light purple at top
-            Colors.white,      // White in middle
-            Color(0xFFD7FFB8), // Light green at bottom
+            Color(0xFFF0E6FF),
+            Colors.white,
+            Color(0xFFD7FFB8),
           ],
           stops: [0.0, 0.5, 1.0],
         ),

@@ -23,21 +23,16 @@ class BottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            // Home Button
             Expanded(
               child: _buildNavItem(0, Icons.home, 'Home'),
             ),
-            // Analytics Button
             Expanded(
               child: _buildNavItem(1, Icons.bar_chart, 'Analytics'),
             ),
-            // Empty space for FAB
             if (selectedIndex == 0 && isFABVisible) const Spacer(),
-            // Community Button
             Expanded(
-              child: _buildNavItem(2, Icons.people, 'Community'),
+              child: _buildNavItem(2, Icons.restaurant_menu, 'Suggestions'),
             ),
-            // Account Button
             Expanded(
               child: _buildNavItem(3, Icons.settings, 'Account'),
             ),

@@ -1,9 +1,7 @@
-// lib/screens/account_screen.dart
 import 'package:flutter/material.dart';
-import '../widgets/profile_tabs.dart';
-import '../widgets/profile_info_tile.dart';
-import '../models/user_model.dart';
-
+import 'package:project/models/user_model.dart';
+import 'package:project/widgets/account_screen/profile_info_tile.dart';
+import 'package:project/widgets/account_screen/profile_tabs.dart';
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
 
@@ -13,10 +11,7 @@ class AccountScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        scrolledUnderElevation: 0,
         title: const Text(
           'Account settings',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
@@ -39,16 +34,11 @@ class AccountScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 24),
-                    // Profile image section now directly here
                     Column(
                       children: [
                         Stack(
                           alignment: Alignment.bottomRight,
                           children: [
-                            // const CircleAvatar(
-                            //   radius: 40,
-                            //   backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=5'),
-                            // ),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -68,7 +58,6 @@ class AccountScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        // Use dynamic name and email from UserModel
                         Text(
                           UserModel.name,
                           style: const TextStyle(
@@ -88,7 +77,6 @@ class AccountScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     const ProfileTabs(),
                     const SizedBox(height: 20),
-                    // Display user data from UserModel
                     ProfileInfoTile(
                       iconData: Icons.flag_outlined,
                       label: 'Goal',
@@ -125,9 +113,6 @@ class AccountScreen extends StatelessWidget {
                       value: UserModel.activityLevel,
                       color: const Color(0xFFDBD1F8),
                     ),
-                    // Empty tiles with arrows for additional sections
-                    const EmptyProfileTile(),
-                    const EmptyProfileTile(),
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -135,29 +120,6 @@ class AccountScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class EmptyProfileTile extends StatelessWidget {
-  const EmptyProfileTile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F8F8),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 40, height: 40),
-          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-        ],
       ),
     );
   }

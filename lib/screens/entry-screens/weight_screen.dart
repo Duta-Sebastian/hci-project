@@ -1,7 +1,6 @@
-// lib/screens/onboarding/weight_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/screens/entry-screens/weight_goal_screen.dart';
-import 'package:project/widgets/custom_button.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
 
 class WeightScreen extends StatefulWidget {
   final String gender;
@@ -27,12 +26,12 @@ class _WeightScreenState extends State<WeightScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE6B9FF), // Purple background
+      backgroundColor: const Color(0xFFE6B9FF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -47,7 +46,7 @@ class _WeightScreenState extends State<WeightScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // White text
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 30),
@@ -56,7 +55,7 @@ class _WeightScreenState extends State<WeightScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: const Color(0xFFB3FF65)), // Green border
+                  border: Border.all(color: const Color(0xFFB3FF65)),
                 ),
                 child: Column(
                   children: [
@@ -86,9 +85,9 @@ class _WeightScreenState extends State<WeightScreen> {
                       min: 40,
                       max: 150,
                       divisions: 110,
-                      activeColor: const Color(0xFFB3FF65), // Green accent
+                      activeColor: const Color(0xFFB3FF65),
                       inactiveColor: Colors.grey.shade300,
-                      thumbColor: const Color(0xFFB3FF65), // Green thumb
+                      thumbColor: const Color(0xFFB3FF65),
                       onChanged: (double value) {
                         setState(() {
                           selectedWeight = value.round();
@@ -100,10 +99,9 @@ class _WeightScreenState extends State<WeightScreen> {
               ),
               const Spacer(),
               CustomButton(
-                text: 'Continue', // Changed from "Finish Setup" to "Continue"
-                isPrimary: true, // Purple button
+                text: 'Continue',
+                isPrimary: true,
                 onPressed: () {
-                  // Navigate to the weight goal screen instead of account screen
                   Navigator.push(
                     context,
                     MaterialPageRoute(

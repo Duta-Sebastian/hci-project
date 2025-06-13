@@ -4,8 +4,8 @@ import 'package:project/models/nutrition_data.dart';
 import 'package:project/screens/account_screen.dart';
 import 'package:project/screens/add_entry_screen.dart';
 import 'package:project/screens/analytics_screen.dart';
-import 'package:project/screens/community_screen.dart';
 import 'package:project/screens/home_screen.dart';
+import 'package:project/screens/meal_suggestion_screen.dart';
 import 'package:project/services/meal_database.dart';
 import 'package:project/utils/date_utils.dart';
 import 'package:project/widgets/bottom_nav_bar.dart';
@@ -31,10 +31,8 @@ class FitnessAppState extends State<FitnessApp> {
   late DateTime _monthStart;
   late List<DateTime> _weekDays;
 
-  // Add a stream controller to manage data updates
   bool _isUpdating = false;
   
-  // Callback to refresh meals list
   VoidCallback? _refreshMealsCallback;
 
   @override
@@ -53,7 +51,7 @@ class FitnessAppState extends State<FitnessApp> {
   }
 
   Future<void> _loadNutritionDataForDate(DateTime date) async {
-    if (_isUpdating) return; // Prevent concurrent updates
+    if (_isUpdating) return;
     
     setState(() {
       _isLoading = true;
@@ -68,10 +66,8 @@ class FitnessAppState extends State<FitnessApp> {
       final consumedProtein = (totals['protein'] as double).toInt();
       final consumedFat = (totals['fat'] as double).toInt();
       
-      // Get default nutrition goals for the user
       final defaultData = NutritionData.defaultGoals();
       
-      // Use calculated target values instead of preset constants
       final caloriesGoal = defaultData.totalCalories;
       final carbsGoal = defaultData.goals['Carbs']!.target;
       final proteinGoal = defaultData.goals['Protein']!.target;
@@ -123,6 +119,10 @@ class FitnessAppState extends State<FitnessApp> {
       _selectedIndex = index;
     });
     _pageController.jumpToPage(index);
+
+    if (index == 0) {
+      _onDataChanged();
+    }
   }
 
   void _onDateSelected(DateTime date) {
@@ -131,10 +131,8 @@ class FitnessAppState extends State<FitnessApp> {
     setState(() {
       _selectedDate = date;
       
-      // Update week days to contain the selected date
       _weekDays = DateUtil.getWeekDays(date);
       
-      // Check if month changed
       if (_selectedDate.month != _monthStart.month || _selectedDate.year != _monthStart.year) {
         _monthStart = DateTime(_selectedDate.year, _selectedDate.month, 1);
       }
@@ -146,14 +144,11 @@ class FitnessAppState extends State<FitnessApp> {
   void _onMonthChanged(DateTime month) {
     debugPrint("Month changed to: ${month.year}-${month.month}");
     
-    // Using the exact date that was picked from the date picker
     DateTime selectedDate = month;
     
     setState(() {
       _monthStart = DateTime(month.year, month.month, 1);
       _selectedDate = selectedDate;
-      
-      // Update week days to contain the selected date
       _weekDays = DateUtil.getWeekDays(selectedDate);
     });
     
@@ -163,15 +158,13 @@ class FitnessAppState extends State<FitnessApp> {
   void _onWeekChanged(List<DateTime> weekDays) {
     setState(() {
       _weekDays = weekDays;
-      
-      // Determine the dominant month in this week
+    
       Map<int, int> monthCount = {};
       for (var day in weekDays) {
-        int monthKey = day.month + day.year * 100; // Unique key for year-month combination
+        int monthKey = day.month + day.year * 100;
         monthCount[monthKey] = (monthCount[monthKey] ?? 0) + 1;
       }
       
-      // Find month with most days in this week
       int maxDays = 0;
       int dominantMonthKey = 0;
       monthCount.forEach((key, count) {
@@ -181,29 +174,21 @@ class FitnessAppState extends State<FitnessApp> {
         }
       });
       
-      // Extract year and month from the key
       int year = dominantMonthKey ~/ 100;
       int month = dominantMonthKey % 100;
       
-      // Only update month view if the dominant month changed
       if (_monthStart.month != month || _monthStart.year != year) {
         _monthStart = DateTime(year, month, 1);
       }
     });
   }
   
-  // Improved data change handler that updates both nutrition data and meals list
   void _onDataChanged() {
-    if (_isUpdating) return; // Prevent multiple concurrent updates
-    
-    // Update nutrition data
+    if (_isUpdating) return;
     _updateNutritionDataOnly();
-    
-    // Refresh the daily meals widget to show new additions
     _refreshMealsCallback?.call();
   }
   
-  // Method to register the meals refresh callback
   void _setMealsRefreshCallback(VoidCallback callback) {
     _refreshMealsCallback = callback;
   }
@@ -223,7 +208,6 @@ class FitnessAppState extends State<FitnessApp> {
       final consumedProtein = (totals['protein'] as double).toInt();
       final consumedFat = (totals['fat'] as double).toInt();
       
-      // Get default nutrition goals for the user
       final defaultData = NutritionData.defaultGoals();
       
       if (mounted) {
@@ -269,7 +253,6 @@ class FitnessAppState extends State<FitnessApp> {
       );
     }
     
-    // Calculate visibility once to ensure consistency
     final bool showFAB = DateUtil.isSameDay(_selectedDate, DateTime.now()) && _selectedIndex == 0;
     
     return Scaffold(
@@ -298,7 +281,7 @@ class FitnessAppState extends State<FitnessApp> {
               onMealsRefreshCallbackSet: _setMealsRefreshCallback,
             ),
             AnalyticsScreen(nutritionData: nutritionData, selectedDate: _selectedDate),
-            const CommunityScreen(),
+            const MealSuggestionsScreen(),
             const AccountScreen(),
           ],
         ),
@@ -311,7 +294,6 @@ class FitnessAppState extends State<FitnessApp> {
       floatingActionButton: showFAB
           ? FloatingActionButton(
               onPressed: () {
-                // Navigate without any callbacks to prevent crashes
                 Navigator.push(
                   context,
                   MaterialPageRoute(

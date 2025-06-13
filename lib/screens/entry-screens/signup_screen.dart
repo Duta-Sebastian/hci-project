@@ -1,10 +1,9 @@
-// lib/screens/signup_screen.dart
 import 'package:flutter/material.dart';
 import 'package:project/models/user_model.dart';
 import 'package:project/screens/entry-screens/goal_screen.dart';
-import 'package:project/widgets/custom_button.dart';
-import 'package:project/widgets/gradient_background.dart';
-import 'package:project/widgets/logo.dart';
+import 'package:project/widgets/entry_screens/custom_button.dart';
+import 'package:project/widgets/entry_screens/gradient_background.dart';
+import 'package:project/widgets/entry_screens/logo.dart';
 
 
 class SignupScreen extends StatelessWidget {
@@ -12,7 +11,6 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Add these controllers
     final nameController = TextEditingController();
     final surnameController = TextEditingController();
     final emailController = TextEditingController();
@@ -82,7 +80,6 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Email field
                   const SizedBox(height: 20),
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -115,7 +112,6 @@ class SignupScreen extends StatelessWidget {
                   CustomButton(
                     text: 'Create an account',
                     onPressed: () {
-                      // Validate inputs
                       if (nameController.text.isEmpty || 
                           surnameController.text.isEmpty || 
                           emailController.text.isEmpty) {
@@ -127,16 +123,12 @@ class SignupScreen extends StatelessWidget {
                         return;
                       }
                       
-                      // Create full name from name + surname
                       String fullName = "${nameController.text} ${surnameController.text}";
                       
-                      // Use the email entered by the user
                       String email = emailController.text;
                       
-                      // Save the user data
                       UserModel.updateUser(fullName, email);
                       
-                      // Navigate to goal screen (first onboarding step)
                       Navigator.push(
                         context,
                         MaterialPageRoute(
