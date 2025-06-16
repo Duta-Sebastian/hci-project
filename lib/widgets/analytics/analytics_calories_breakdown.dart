@@ -4,11 +4,17 @@ import 'package:project/models/nutrition_data.dart';
 class AnalyticsCaloriesBreakdown extends StatelessWidget {
   final NutritionData nutritionData;
   final int periodIndex;
+  
+  // Add optional dynamic totals for more accurate calculations
+  final int? dynamicWeeklyTotal;
+  final int? dynamicMonthlyTotal;
 
   const AnalyticsCaloriesBreakdown({
     super.key,
     required this.nutritionData,
     required this.periodIndex,
+    this.dynamicWeeklyTotal,
+    this.dynamicMonthlyTotal,
   });
 
   @override
@@ -55,11 +61,14 @@ class AnalyticsCaloriesBreakdown extends StatelessWidget {
   }
 
   Widget _buildWeekMealBreakdown() {
+    // Use dynamic weekly total if available, otherwise use the calculation
+    final weeklyTotal = dynamicWeeklyTotal ?? (nutritionData.totalCalories * 1.08).round();
+    
     return Column(
       children: [
-        // Center number like in Figma
+        // Center number - now uses dynamic weekly total
         Text(
-          '${(nutritionData.totalCalories * 1.08).round()}',
+          '$weeklyTotal',
           style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
