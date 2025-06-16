@@ -33,6 +33,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
     final isOverGoal = nutritionData.caloriesLeft < 0;
     final caloriesOver = isOverGoal ? -nutritionData.caloriesLeft : 0;
     
+<<<<<<< HEAD
     return Container(
       height: 250, // Increased height for better centering
       padding: const EdgeInsets.symmetric(vertical: 20), // Add vertical padding
@@ -50,18 +51,61 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                   totalCalories: nutritionData.totalCalories,
                   caloriesLeft: nutritionData.caloriesLeft,
                   caloriesOver: caloriesOver,
+=======
+    return SizedBox(
+      height: 180,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            width: 140,
+            height: 140,
+            child: CustomPaint(
+              painter: CaloriesPieChartPainter(
+                consumedCalories: nutritionData.consumedCalories,
+                totalCalories: nutritionData.totalCalories,
+                caloriesLeft: nutritionData.caloriesLeft,
+                caloriesOver: caloriesOver,
+              ),
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${nutritionData.caloriesLeft}',
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+>>>>>>> d7dceddcf93ca307976518329cb915cc3a08f421
                 ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+<<<<<<< HEAD
                   Text(
                     isOverGoal ? '+$caloriesOver' : '${nutritionData.caloriesLeft}',
                     style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
+=======
+                  Icon(
+                    Icons.local_fire_department,
+                    size: 14,
+                    color: Colors.orange.shade700,
+                  ),
+                  const SizedBox(width: 4),
+                  const Text(
+                    'Calories left',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey,
+>>>>>>> d7dceddcf93ca307976518329cb915cc3a08f421
                     ),
                   ),
                   Row(
@@ -86,15 +130,18 @@ class AnalyticsCaloriesChart extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildWeekAnalytics() {
     List<String> labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+<<<<<<< HEAD
     // Modified values to ensure purple bars are clearly under goal line
     List<double> values = [0.75, 0.85, 0.65, 0.80, 1.35, 0.70, 0.90];
+=======
+>>>>>>> d7dceddcf93ca307976518329cb915cc3a08f421
     
     final dailyGoal = nutritionData.totalCalories;
     
@@ -167,7 +214,11 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                     if (value > 1.0) {
                       barColor = Colors.red[300]!; // Light red when over goal
                     } else {
+<<<<<<< HEAD
                       barColor = Colors.purple[300]!; // Purple for under goal (these will be beneath the line)
+=======
+                      barColor = Colors.purple[300]!;
+>>>>>>> d7dceddcf93ca307976518329cb915cc3a08f421
                     }
                     
                     // Calculate bar height: goal (1.0) = baseBarHeight, cap at maxBarHeight
@@ -293,7 +344,11 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                               ),
                             ),
                             Text(
+<<<<<<< HEAD
                               'best day (${(dailyGoal * 0.85).round()} kcal)',
+=======
+                              'best day (${(dailyGoal * values.reduce((a, b) => a < b ? a : b)).round()} kcal)',
+>>>>>>> d7dceddcf93ca307976518329cb915cc3a08f421
                               style: TextStyle(
                                 fontSize: 8,
                                 color: Colors.grey[600],
