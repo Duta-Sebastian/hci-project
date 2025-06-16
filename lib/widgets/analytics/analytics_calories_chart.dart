@@ -27,30 +27,12 @@ class AnalyticsCaloriesChart extends StatelessWidget {
     final isOverGoal = nutritionData.caloriesLeft < 0;
     final caloriesOver = isOverGoal ? -nutritionData.caloriesLeft : 0;
     
-    return Container(
-<<<<<<< HEAD:lib/widgets/analytics_calories_chart.dart
-      height: 250, // Increased height for better centering
-      padding: const EdgeInsets.symmetric(vertical: 20), // Add vertical padding
-      child: Center( // Wrap in Center widget for better centering
-        child: Container(
-          width: 160, // Slightly increased size
-          height: 160,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              CustomPaint(
-                size: const Size(160, 160), // Explicit size
-                painter: CaloriesPieChartPainter(
-                  consumedCalories: nutritionData.consumedCalories,
-                  totalCalories: nutritionData.totalCalories,
-                  caloriesLeft: nutritionData.caloriesLeft,
-                  caloriesOver: caloriesOver,
-=======
+    return SizedBox(
       height: 180,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Container(
+          SizedBox(
             width: 140,
             height: 140,
             child: CustomPaint(
@@ -58,6 +40,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                 consumedCalories: nutritionData.consumedCalories,
                 totalCalories: nutritionData.totalCalories,
                 caloriesLeft: nutritionData.caloriesLeft,
+                caloriesOver: caloriesOver,
               ),
             ),
           ),
@@ -71,21 +54,12 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
->>>>>>> 05a7d98c7f0d75418b3ea2c18ae7e7261b46b7df:lib/widgets/analytics/analytics_calories_chart.dart
                 ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-<<<<<<< HEAD:lib/widgets/analytics_calories_chart.dart
-                  Text(
-                    isOverGoal ? '+$caloriesOver' : '${nutritionData.caloriesLeft}',
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-=======
                   Icon(
                     Icons.local_fire_department,
                     size: 14,
@@ -97,7 +71,6 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.grey,
->>>>>>> 05a7d98c7f0d75418b3ea2c18ae7e7261b46b7df:lib/widgets/analytics/analytics_calories_chart.dart
                     ),
                   ),
                   Row(
@@ -122,18 +95,13 @@ class AnalyticsCaloriesChart extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildWeekAnalytics() {
     List<String> labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-<<<<<<< HEAD:lib/widgets/analytics_calories_chart.dart
-    // Modified values to ensure purple bars are clearly under goal line
-    List<double> values = [0.75, 0.85, 0.65, 0.80, 1.35, 0.70, 0.90];
-=======
->>>>>>> 05a7d98c7f0d75418b3ea2c18ae7e7261b46b7df:lib/widgets/analytics/analytics_calories_chart.dart
     
     final dailyGoal = nutritionData.totalCalories;
     final currentDayValue = dailyGoal > 0 ? nutritionData.consumedCalories / dailyGoal : 0.0;
@@ -206,11 +174,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                     if (value > 1.0) {
                       barColor = Colors.red[300]!;
                     } else {
-<<<<<<< HEAD:lib/widgets/analytics_calories_chart.dart
-                      barColor = Colors.purple[300]!; // Purple for under goal (these will be beneath the line)
-=======
                       barColor = Colors.purple[300]!;
->>>>>>> 05a7d98c7f0d75418b3ea2c18ae7e7261b46b7df:lib/widgets/analytics/analytics_calories_chart.dart
                     }
                     
                     double barHeight = baseBarHeight * value;
@@ -364,11 +328,7 @@ class AnalyticsCaloriesChart extends StatelessWidget {
                               ),
                             ),
                             Text(
-<<<<<<< HEAD:lib/widgets/analytics_calories_chart.dart
-                              'best day (${(dailyGoal * 0.85).round()} kcal)',
-=======
                               'best day (${(dailyGoal * values.reduce((a, b) => a < b ? a : b)).round()} kcal)',
->>>>>>> 05a7d98c7f0d75418b3ea2c18ae7e7261b46b7df:lib/widgets/analytics/analytics_calories_chart.dart
                               style: TextStyle(
                                 fontSize: 8,
                                 color: Colors.grey[600],
